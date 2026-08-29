@@ -11,77 +11,96 @@ interface IntroLogoProps {
 }
 
 export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const introRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLImageElement>(null);
-  const leftWaveRef = useRef<HTMLDivElement>(null);
-  const rightWaveRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
+  const leftBlueShapeRef = useRef<HTMLDivElement>(null);
+  const rightGreenShapeRef = useRef<HTMLDivElement>(null);
+  const topBlueGlowRef = useRef<HTMLDivElement>(null);
+  const topGreenGlowRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      // 1. Initial Entrance Animation States
-      gsap.set(leftWaveRef.current, { xPercent: -40, opacity: 0 });
-      gsap.set(rightWaveRef.current, { xPercent: 40, opacity: 0 });
+      // 1. Set Initial States (Pure zero-state setup)
       gsap.set(logoRef.current, {
         opacity: 0,
-        scale: 0.65,
-        filter: 'blur(15px)',
+        scale: 0.72,
+        filter: 'blur(18px)',
+        y: 20,
       });
-      gsap.set(glowRef.current, { opacity: 0, scale: 0.5 });
-      gsap.set(scrollIndicatorRef.current, { opacity: 0, y: 25 });
 
-      // 2. Entrance Timeline (Triggered on page load)
-      const entranceTl = gsap.timeline({
+      gsap.set(leftBlueShapeRef.current, {
+        xPercent: -12,
+        yPercent: 8,
+        opacity: 0,
+      });
+
+      gsap.set(rightGreenShapeRef.current, {
+        xPercent: 12,
+        yPercent: 8,
+        opacity: 0,
+      });
+
+      gsap.set([topBlueGlowRef.current, topGreenGlowRef.current], {
+        opacity: 0,
+      });
+
+      gsap.set(scrollIndicatorRef.current, {
+        opacity: 0,
+        y: 20,
+      });
+
+      // 2. Master Opening Sequence Timeline
+      const masterTl = gsap.timeline({
         onComplete: () => {
           if (onComplete) onComplete();
         },
       });
 
-      // Liquid Waves slide in
-      const waveTargets = [leftWaveRef.current, rightWaveRef.current].filter(Boolean);
-      if (waveTargets.length > 0) {
-        entranceTl.to(waveTargets, {
+      // Liquid Shapes reveal (Duration 1.8s)
+      masterTl.to(
+        [leftBlueShapeRef.current, rightGreenShapeRef.current],
+        {
           xPercent: 0,
+          yPercent: 0,
           opacity: 1,
-          duration: 1.4,
+          duration: 1.8,
           ease: 'power3.out',
-          stagger: 0.15,
-        }, 0.0);
-      }
+          stagger: 0.1,
+        },
+        0.0
+      );
 
-      // Ambient center glow
-      if (glowRef.current) {
-        entranceTl.to(
-          glowRef.current,
-          {
-            opacity: 0.9,
-            scale: 1,
-            duration: 1.2,
-            ease: 'power2.out',
-          },
-          0.2
-        );
-      }
+      // Top corner ambient glows
+      masterTl.to(
+        [topBlueGlowRef.current, topGreenGlowRef.current],
+        {
+          opacity: 0.35,
+          duration: 1.5,
+          ease: 'power2.out',
+        },
+        0.2
+      );
 
-      // Logo reveal: scale 0.65 -> 1, opacity 0 -> 1, blur 15px -> 0 (~1.3s)
+      // HUGE STAR FURNITURE LOGO Reveal (Duration 1.4s, power3.out)
       if (logoRef.current) {
-        entranceTl.to(
+        masterTl.to(
           logoRef.current,
           {
             opacity: 1,
             scale: 1,
             filter: 'blur(0px)',
-            duration: 1.3,
+            y: 0,
+            duration: 1.4,
             ease: 'power3.out',
           },
-          0.25
+          0.3
         );
       }
 
-      // Scroll Indicator Reveal
+      // Minimal Scroll Indicator Reveal
       if (scrollIndicatorRef.current) {
-        entranceTl.to(
+        masterTl.to(
           scrollIndicatorRef.current,
           {
             opacity: 1,
@@ -89,64 +108,82 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
             duration: 0.8,
             ease: 'power2.out',
           },
-          1.0
+          1.2
         );
+
+        // Continuous subtle vertical pulse for scroll icon
+        gsap.to(scrollIndicatorRef.current.querySelector('.scroll-dot'), {
+          y: 6,
+          duration: 1.2,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
       }
 
-      // 3. CINEMATIC LOGO EXIT TRANSITION TO HERO (ScrollTrigger Scrub)
-      // When scrolling down, logo expands (scale: 1 -> 1.08) and dissolves (opacity: 1 -> 0)
-      if (containerRef.current && logoRef.current) {
-        gsap.to(logoRef.current, {
-          scale: 1.08,
-          opacity: 0,
-          filter: 'blur(10px)',
-          ease: 'none',
+      // 3. Slow Ambient Floating Motion for Liquid Waves (6-10s, yoyo: true)
+      if (leftBlueShapeRef.current) {
+        gsap.to(leftBlueShapeRef.current, {
+          x: '+=15',
+          y: '-=10',
+          duration: 8,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
+      }
+
+      if (rightGreenShapeRef.current) {
+        gsap.to(rightGreenShapeRef.current, {
+          x: '-=15',
+          y: '+=10',
+          duration: 9,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
+      }
+
+      // 4. PINNED CINEMATIC INTRO EXIT TRANSITION TO HERO
+      // When scrolling down, the logo scales 1 -> 1.08 and dissolves, while background expands
+      if (introRef.current && logoRef.current) {
+        const exitTl = gsap.timeline({
           scrollTrigger: {
-            trigger: containerRef.current,
+            trigger: introRef.current,
             start: 'top top',
-            end: 'bottom top',
-            scrub: 0.8,
+            end: '+=80%',
+            pin: true,
+            scrub: 1,
           },
         });
 
-        if (scrollIndicatorRef.current) {
-          gsap.to(scrollIndicatorRef.current, {
-            opacity: 0,
-            y: 30,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: 'top top',
-              end: '30% top',
-              scrub: 0.5,
-            },
-          });
-        }
-      }
+        exitTl.to(logoRef.current, {
+          scale: 1.08,
+          opacity: 0,
+          filter: 'blur(12px)',
+          ease: 'power1.in',
+        }, 0.0);
 
-      // Subtle ambient wave floating loop
-      if (leftWaveRef.current) {
-        gsap.to(leftWaveRef.current, {
-          y: '+=10',
-          rotation: 1,
-          duration: 6,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
-      }
-      if (rightWaveRef.current) {
-        gsap.to(rightWaveRef.current, {
-          y: '-=10',
-          rotation: -1,
-          duration: 7,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
+        if (scrollIndicatorRef.current) {
+          exitTl.to(scrollIndicatorRef.current, {
+            opacity: 0,
+            y: 25,
+            ease: 'power1.in',
+          }, 0.0);
+        }
+
+        exitTl.to(
+          [leftBlueShapeRef.current, rightGreenShapeRef.current],
+          {
+            scale: 1.15,
+            opacity: 0.2,
+            ease: 'none',
+          },
+          0.0
+        );
       }
     },
-    { scope: containerRef }
+    { scope: introRef }
   );
 
   const handleScrollClick = () => {
@@ -158,90 +195,97 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
 
   return (
     <section
-      ref={containerRef}
+      ref={introRef}
       id="intro-section"
-      className="relative w-full min-h-screen flex flex-col items-center justify-center bg-[#FAFBFD] overflow-hidden select-none"
+      className="relative w-screen h-screen min-h-screen overflow-hidden bg-[#FAFCFB] flex items-center justify-center select-none z-40"
+      style={{ width: '100vw', height: '100vh' }}
     >
-      {/* LEFT FLUID LIQUID BLUE WAVE SWOOSH (Exact match to screenshot) */}
+      {/* TOP LEFT SUBTLE AMBIENT GLOW */}
       <div
-        ref={leftWaveRef}
-        className="absolute top-0 left-0 w-[58vw] max-w-[800px] h-full pointer-events-none z-0 flex items-center"
-      >
-        <svg
-          viewBox="0 0 750 950"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full object-cover filter drop-shadow-[0_25px_60px_rgba(6,91,182,0.18)]"
-        >
-          <defs>
-            <linearGradient id="blueWaveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#1D4ED8" stopOpacity="0.9" />
-              <stop offset="40%" stopColor="#065BB6" stopOpacity="0.8" />
-              <stop offset="85%" stopColor="#60A5FA" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#93C5FD" stopOpacity="0.0" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M-100,-100 L300,-100 C420,100 500,280 440,480 C380,680 470,820 220,1000 L-100,1000 Z"
-            fill="url(#blueWaveGrad)"
-          />
-        </svg>
-      </div>
-
-      {/* RIGHT FLUID LIQUID GREEN WAVE SWOOSH (Exact match to screenshot) */}
-      <div
-        ref={rightWaveRef}
-        className="absolute top-0 right-0 w-[58vw] max-w-[800px] h-full pointer-events-none z-0 flex items-center justify-end"
-      >
-        <svg
-          viewBox="0 0 750 950"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full object-cover filter drop-shadow-[0_25px_60px_rgba(13,148,136,0.18)]"
-        >
-          <defs>
-            <linearGradient id="greenWaveGrad" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#34D399" stopOpacity="0.85" />
-              <stop offset="45%" stopColor="#10B981" stopOpacity="0.75" />
-              <stop offset="85%" stopColor="#0D9488" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#A7F3D0" stopOpacity="0.0" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M850,-100 L450,-100 C330,140 220,320 290,520 C360,720 250,860 520,1000 L850,1000 Z"
-            fill="url(#greenWaveGrad)"
-          />
-        </svg>
-      </div>
-
-      {/* SOFT CENTER AMBIENT WHITE GLOW */}
-      <div
-        ref={glowRef}
-        className="absolute w-[700px] h-[700px] rounded-full bg-radial from-[#FFFFFF] via-[rgba(255,255,255,0.95)] to-transparent blur-3xl pointer-events-none z-0"
+        ref={topBlueGlowRef}
+        className="absolute -top-32 -left-32 w-[450px] h-[450px] rounded-full bg-gradient-to-br from-[#065BB6]/15 to-transparent blur-3xl pointer-events-none z-0"
       />
 
-      {/* CENTER HUGE STAR FURNITURE LOGO (Pixel-perfect match to screenshot) */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-4 max-w-5xl w-full text-center">
-        <div className="w-[85%] sm:w-[78%] md:w-[70%] lg:w-[64%] max-w-[850px] flex justify-center">
+      {/* TOP RIGHT SUBTLE AMBIENT GLOW */}
+      <div
+        ref={topGreenGlowRef}
+        className="absolute -top-32 -right-32 w-[450px] h-[450px] rounded-full bg-gradient-to-bl from-[#10B981]/15 to-transparent blur-3xl pointer-events-none z-0"
+      />
+
+      {/* LEFT LIQUID BLUE WAVE/BLOB (Positioned left: -15% to -25%, bottom: -10%, extending into lower-left 30%) */}
+      <div
+        ref={leftBlueShapeRef}
+        className="absolute -left-[18%] -bottom-[12%] w-[58vw] max-w-[850px] h-[65vh] pointer-events-none z-0 flex items-end"
+      >
+        <svg
+          viewBox="0 0 800 800"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-full object-cover filter drop-shadow-[0_20px_50px_rgba(6,91,182,0.14)]"
+        >
+          <defs>
+            <linearGradient id="blueLiquidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#1D4ED8" stopOpacity="0.85" />
+              <stop offset="50%" stopColor="#065BB6" stopOpacity="0.7" />
+              <stop offset="90%" stopColor="#60A5FA" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M-50,850 C150,850 250,750 380,680 C510,610 650,680 720,500 C790,320 620,150 500,-50 L-50,-50 Z"
+            fill="url(#blueLiquidGrad)"
+          />
+        </svg>
+      </div>
+
+      {/* RIGHT LIQUID GREEN WAVE/BLOB (Positioned right: -15% to -25%, bottom: -10%, extending into lower-right 30%) */}
+      <div
+        ref={rightGreenShapeRef}
+        className="absolute -right-[18%] -bottom-[12%] w-[58vw] max-w-[850px] h-[65vh] pointer-events-none z-0 flex items-end justify-end"
+      >
+        <svg
+          viewBox="0 0 800 800"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-full object-cover filter drop-shadow-[0_20px_50px_rgba(16,185,129,0.14)]"
+        >
+          <defs>
+            <linearGradient id="greenLiquidGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#34D399" stopOpacity="0.85" />
+              <stop offset="50%" stopColor="#10B981" stopOpacity="0.7" />
+              <stop offset="90%" stopColor="#0D9488" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M850,850 C650,850 550,750 420,680 C290,610 150,680 80,500 C10,320 180,150 300,-50 L850,-50 Z"
+            fill="url(#greenLiquidGrad)"
+          />
+        </svg>
+      </div>
+
+      {/* HUGE STAR FURNITURE LOGO (55vw-65vw Desktop, 75vw-85vw Mobile, Max width 900px, Directly on White background, NO CARD, NO BOX) */}
+      <div className="relative z-10 flex flex-col items-center justify-center px-4 w-full text-center">
+        <div className="w-[78vw] sm:w-[72vw] md:w-[62vw] lg:w-[58vw] max-w-[900px] flex justify-center">
           <img
             ref={logoRef}
             src={getPublicAsset('logo.png')}
             alt="Star Furniture - Comfort • Quality • Trust"
-            className="w-full h-auto object-contain drop-shadow-[0_20px_40px_rgba(6,91,182,0.15)] transform"
+            className="w-full h-auto object-contain drop-shadow-[0_15px_35px_rgba(6,91,182,0.12)]"
           />
         </div>
       </div>
 
-      {/* SCROLL TO EXPLORE MOUSE INDICATOR (Exact match to reference screenshot) */}
+      {/* MINIMAL SCROLL INDICATOR (Bottom: 35px, Centered) */}
       <div
         ref={scrollIndicatorRef}
         onClick={handleScrollClick}
-        className="absolute bottom-8 z-10 flex flex-col items-center gap-2 cursor-pointer group"
+        className="absolute bottom-[35px] z-10 flex flex-col items-center gap-1.5 cursor-pointer group"
       >
-        <div className="w-6 h-10 rounded-full border-2 border-[rgba(13,148,136,0.5)] group-hover:border-[#0D9488] flex justify-center p-1.5 transition-colors duration-300 backdrop-blur-sm bg-white/60 shadow-sm">
-          <div className="w-1.5 h-2.5 rounded-full bg-[#0D9488] animate-bounce" />
+        <div className="w-5 h-9 rounded-full border border-slate-300 group-hover:border-[#065BB6] flex justify-center p-1 backdrop-blur-sm bg-white/70 transition-colors shadow-sm">
+          <div className="scroll-dot w-1.5 h-2 rounded-full bg-[#065BB6]" />
         </div>
-        <span className="text-[11px] font-medium tracking-wider text-[#64748B] group-hover:text-[#065BB6] transition-colors uppercase">
+        <span className="text-[10px] font-medium tracking-widest text-slate-400 group-hover:text-[#065BB6] uppercase transition-colors">
           Scroll to explore
         </span>
       </div>
