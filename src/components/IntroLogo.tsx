@@ -15,85 +15,101 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Setup initial animation states
-      gsap.set(leftWaveRef.current, { xPercent: -30, opacity: 0 });
-      gsap.set(rightWaveRef.current, { xPercent: 30, opacity: 0 });
-      gsap.set(logoRef.current, {
-        opacity: 0,
-        scale: 0.8,
-        filter: 'blur(16px)',
-      });
-      gsap.set(glowRef.current, { opacity: 0, scale: 0.6 });
-      gsap.set(scrollIndicatorRef.current, { opacity: 0, y: 20 });
+    if (!containerRef.current) return;
 
-      // GSAP Entrance Timeline matching the user's reference screenshot
+    const ctx = gsap.context(() => {
+      // Setup initial animation states safely
+      if (leftWaveRef.current) gsap.set(leftWaveRef.current, { xPercent: -30, opacity: 0 });
+      if (rightWaveRef.current) gsap.set(rightWaveRef.current, { xPercent: 30, opacity: 0 });
+      if (logoRef.current) {
+        gsap.set(logoRef.current, {
+          opacity: 0,
+          scale: 0.8,
+          filter: 'blur(16px)',
+        });
+      }
+      if (glowRef.current) gsap.set(glowRef.current, { opacity: 0, scale: 0.6 });
+      if (scrollIndicatorRef.current) gsap.set(scrollIndicatorRef.current, { opacity: 0, y: 20 });
+
+      // GSAP Entrance Timeline
       const tl = gsap.timeline({
         onComplete: () => {
           if (onComplete) onComplete();
         },
       });
 
-      // 1. Fluid Liquid Waves slide in
-      tl.to([leftWaveRef.current, rightWaveRef.current], {
-        xPercent: 0,
-        opacity: 1,
-        duration: 1.4,
-        ease: 'power3.out',
-        stagger: 0.15,
-      })
-      // 2. Soft Ambient Center Glow
-      .to(
-        glowRef.current,
-        {
-          opacity: 0.8,
-          scale: 1,
-          duration: 1.2,
-          ease: 'power2.out',
-        },
-        '-=1.1'
-      )
-      // 3. Logo Reveal (blur: 16px -> 0px, scale 0.8 -> 1.0, opacity: 0 -> 1)
-      .to(
-        logoRef.current,
-        {
+      const targetsToAnimate = [leftWaveRef.current, rightWaveRef.current].filter(Boolean);
+      if (targetsToAnimate.length > 0) {
+        tl.to(targetsToAnimate, {
+          xPercent: 0,
           opacity: 1,
-          scale: 1,
-          filter: 'blur(0px)',
-          duration: 1.3,
+          duration: 1.4,
           ease: 'power3.out',
-        },
-        '-=1.0'
-      )
-      // 4. "Scroll to explore" Mouse Indicator Reveal
-      .to(
-        scrollIndicatorRef.current,
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-        },
-        '-=0.4'
-      );
+          stagger: 0.15,
+        });
+      }
 
-      // Subtle slow floating liquid wave motion after entrance
-      gsap.to(leftWaveRef.current, {
-        y: '+=15',
-        rotation: 1.5,
-        duration: 6,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
-      gsap.to(rightWaveRef.current, {
-        y: '-=15',
-        rotation: -1.5,
-        duration: 7,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
+      if (glowRef.current) {
+        tl.to(
+          glowRef.current,
+          {
+            opacity: 0.8,
+            scale: 1,
+            duration: 1.2,
+            ease: 'power2.out',
+          },
+          '-=1.1'
+        );
+      }
+
+      if (logoRef.current) {
+        tl.to(
+          logoRef.current,
+          {
+            opacity: 1,
+            scale: 1,
+            filter: 'blur(0px)',
+            duration: 1.3,
+            ease: 'power3.out',
+          },
+          '-=1.0'
+        );
+      }
+
+      if (scrollIndicatorRef.current) {
+        tl.to(
+          scrollIndicatorRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+          },
+          '-=0.4'
+        );
+      }
+
+      if (leftWaveRef.current) {
+        gsap.to(leftWaveRef.current, {
+          y: '+=15',
+          rotation: 1.5,
+          duration: 6,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
+      }
+
+      if (rightWaveRef.current) {
+        gsap.to(rightWaveRef.current, {
+          y: '-=15',
+          rotation: -1.5,
+          duration: 7,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
+      }
     }, containerRef);
 
     return () => ctx.revert();
@@ -112,7 +128,7 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
       id="intro-section"
       className="relative w-full min-h-screen flex flex-col items-center justify-center bg-[#FAFBFD] overflow-hidden select-none"
     >
-      {/* LEFT FLUID LIQUID BLUE WAVE (Exact match to reference screenshot) */}
+      {/* LEFT FLUID LIQUID BLUE WAVE */}
       <div
         ref={leftWaveRef}
         className="absolute top-0 left-0 w-[55vw] max-w-[750px] h-full pointer-events-none z-0 flex items-center"
@@ -137,7 +153,7 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         </svg>
       </div>
 
-      {/* RIGHT FLUID LIQUID GREEN WAVE (Exact match to reference screenshot) */}
+      {/* RIGHT FLUID LIQUID GREEN WAVE */}
       <div
         ref={rightWaveRef}
         className="absolute top-0 right-0 w-[55vw] max-w-[750px] h-full pointer-events-none z-0 flex items-center justify-end"
@@ -168,7 +184,7 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         className="absolute w-[600px] h-[600px] rounded-full bg-radial from-[#FFFFFF] via-[rgba(255,255,255,0.9)] to-transparent blur-3xl pointer-events-none z-0"
       />
 
-      {/* CENTER STAR FURNITURE LOGO (Pixel-perfect match to screenshot) */}
+      {/* CENTER STAR FURNITURE LOGO */}
       <div className="relative z-10 flex flex-col items-center justify-center px-4 max-w-4xl w-full text-center">
         <img
           ref={logoRef}
@@ -178,17 +194,15 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         />
       </div>
 
-      {/* SCROLL TO EXPLORE MOUSE INDICATOR (Exact match to screenshot bottom indicator) */}
+      {/* SCROLL TO EXPLORE MOUSE INDICATOR */}
       <div
         ref={scrollIndicatorRef}
         onClick={handleScrollClick}
         className="absolute bottom-8 z-10 flex flex-col items-center gap-2 cursor-pointer group"
       >
-        {/* Mouse Pill Icon */}
         <div className="w-6 h-10 rounded-full border-2 border-[rgba(6,91,182,0.4)] group-hover:border-[#065BB6] flex justify-center p-1.5 transition-colors duration-300 backdrop-blur-sm bg-white/40">
           <div className="w-1.5 h-2.5 rounded-full bg-[#065BB6] animate-bounce" />
         </div>
-        {/* Text Label */}
         <span className="text-[11px] font-medium tracking-wider text-[#64748B] group-hover:text-[#065BB6] transition-colors uppercase">
           Scroll to explore
         </span>

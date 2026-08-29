@@ -15,30 +15,38 @@ export const Hero: React.FC = () => {
   const glassCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!sectionRef.current) return;
+
     const ctx = gsap.context(() => {
-      // Hero Entrance Timeline
       const tl = gsap.timeline({ delay: 0.2 });
 
-      tl.fromTo(
-        textColRef.current,
-        { opacity: 0, x: -80 },
-        { opacity: 1, x: 0, duration: 1.3, ease: 'power3.out' }
-      )
-      .fromTo(
-        imageColRef.current,
-        { opacity: 0, scale: 1.12 },
-        { opacity: 1, scale: 1, duration: 1.4, ease: 'power3.out' },
-        '-=1.0'
-      )
-      .fromTo(
-        glassCardRef.current,
-        { opacity: 0, y: 35 },
-        { opacity: 1, y: 0, duration: 0.9, ease: 'back.out(1.4)' },
-        '-=0.5'
-      );
+      if (textColRef.current) {
+        tl.fromTo(
+          textColRef.current,
+          { opacity: 0, x: -80 },
+          { opacity: 1, x: 0, duration: 1.3, ease: 'power3.out' }
+        );
+      }
 
-      // ScrollTrigger Parallax
-      if (heroImgRef.current) {
+      if (imageColRef.current) {
+        tl.fromTo(
+          imageColRef.current,
+          { opacity: 0, scale: 1.12 },
+          { opacity: 1, scale: 1, duration: 1.4, ease: 'power3.out' },
+          '-=1.0'
+        );
+      }
+
+      if (glassCardRef.current) {
+        tl.fromTo(
+          glassCardRef.current,
+          { opacity: 0, y: 35 },
+          { opacity: 1, y: 0, duration: 0.9, ease: 'back.out(1.4)' },
+          '-=0.5'
+        );
+      }
+
+      if (heroImgRef.current && sectionRef.current) {
         gsap.to(heroImgRef.current, {
           yPercent: 10,
           scale: 1.08,
