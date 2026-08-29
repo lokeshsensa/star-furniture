@@ -16,17 +16,17 @@ export const StarFurnitureIntro: React.FC<StarFurnitureIntroProps> = ({ onComple
 
   useGSAP(
     () => {
-      // 1. Initial State Setup
+      // 1. Initial State Setup according to specification
       gsap.set(leftBlueWaveRef.current, {
         opacity: 0,
-        x: -60,
-        y: 30,
+        x: -80,
+        y: 40,
       });
 
       gsap.set(rightGreenWaveRef.current, {
         opacity: 0,
-        x: 60,
-        y: 30,
+        x: 80,
+        y: 40,
       });
 
       gsap.set(logoRef.current, {
@@ -60,7 +60,7 @@ export const StarFurnitureIntro: React.FC<StarFurnitureIntroProps> = ({ onComple
         );
       }
 
-      // 0.35s: Logo Entrance (1.35s, power4.out)
+      // 0.35s: Star Furniture Logo Entrance (1.35s, power4.out)
       if (logoRef.current) {
         tl.to(
           logoRef.current,
@@ -162,7 +162,7 @@ export const StarFurnitureIntro: React.FC<StarFurnitureIntroProps> = ({ onComple
             <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
           </linearGradient>
         </defs>
-        {/* Curved Organic Bézier Path */}
+        {/* Organic Bézier Wave Path */}
         <path
           d="M-50,700 C150,700 240,580 380,480 C520,380 660,420 780,260 C840,140 720,40 580,-50 L-50,-50 Z"
           fill="url(#blueLiquidGrad)"
@@ -193,7 +193,7 @@ export const StarFurnitureIntro: React.FC<StarFurnitureIntroProps> = ({ onComple
             <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
           </linearGradient>
         </defs>
-        {/* Curved Organic Bézier Path */}
+        {/* Organic Bézier Wave Path */}
         <path
           d="M950,700 C750,700 660,580 520,480 C380,380 240,420 120,260 C60,140 180,40 320,-50 L950,-50 Z"
           fill="url(#greenLiquidGrad)"
