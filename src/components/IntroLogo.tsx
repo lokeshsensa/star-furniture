@@ -15,15 +15,17 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
 
   useGSAP(
     () => {
-      // 1. Initial Zero-State Setup
+      // 1. Initial State Setup
       gsap.set(leftBlueWaveRef.current, {
         opacity: 0,
-        xPercent: -8,
+        x: -40,
+        y: 30,
       });
 
       gsap.set(rightGreenWaveRef.current, {
         opacity: 0,
-        xPercent: 8,
+        x: 40,
+        y: 30,
       });
 
       gsap.set(logoRef.current, {
@@ -40,15 +42,16 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         },
       });
 
-      // 0.1s: Blue & Green organic liquid waves reveal (1.8s, power3.out)
+      // 0.1s: Blue & Green Liquid Waves flow in (1.6-1.8s, power3.out)
       const waves = [leftBlueWaveRef.current, rightGreenWaveRef.current].filter(Boolean);
       if (waves.length > 0) {
         tl.to(
           waves,
           {
             opacity: 1,
-            xPercent: 0,
-            duration: 1.8,
+            x: 0,
+            y: 0,
+            duration: 1.7,
             ease: 'power3.out',
             stagger: 0.08,
           },
@@ -72,7 +75,7 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         );
       }
 
-      // 1.75s–2.75s: Hold for 1 second cleanly visible
+      // 1.7s–2.7s: Hold for 1 second cleanly visible
 
       // 2.75s: Automatic GSAP Exit Transition (0.7s)
       if (logoRef.current) {
@@ -93,7 +96,7 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         tl.to(
           waves,
           {
-            scale: 1.08,
+            scale: 1.06,
             opacity: 0,
             duration: 0.7,
             ease: 'power2.inOut',
@@ -114,10 +117,10 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         );
       }
 
-      // 3. Subtle Ambient Liquid Motion Loop (9s, yoyo: true)
+      // 3. Subtle Living Liquid Ambient Motion Loop (8-10s, yoyo: true)
       if (leftBlueWaveRef.current) {
         gsap.to(leftBlueWaveRef.current, {
-          x: 12,
+          x: 10,
           duration: 9,
           repeat: -1,
           yoyo: true,
@@ -127,7 +130,7 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
 
       if (rightGreenWaveRef.current) {
         gsap.to(rightGreenWaveRef.current, {
-          x: -12,
+          x: -10,
           duration: 9,
           repeat: -1,
           yoyo: true,
@@ -145,81 +148,86 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
       className="fixed inset-0 z-[200] w-screen h-screen overflow-hidden bg-[#FFFFFF] flex items-center justify-center select-none pointer-events-none"
       style={{ width: '100vw', height: '100vh' }}
     >
-      {/* LEFT ORGANIC BLUE LIQUID WAVE (Bottom-left corner, left: -5%, bottom: -12%) */}
+      {/* LAYER 0: PURE WHITE CANVAS BACKGROUND */}
+      <div className="absolute inset-0 bg-[#FFFFFF] w-full h-full z-0" />
+
+      {/* LAYER 1: ORGANIC BLUE LIQUID WAVE SVG (Bottom-left corner, left: -5vw, bottom: -10vh, width: 48vw, height: 42vh) */}
       <div
         ref={leftBlueWaveRef}
-        className="absolute -left-[5%] -bottom-[12%] w-[55vw] max-w-[800px] h-[50vh] sm:w-[52vw] sm:h-[52vh] w-[75vw] h-[35vh] pointer-events-none z-10 flex items-end"
+        className="absolute -left-[5vw] -bottom-[10vh] w-[50vw] sm:w-[48vw] h-[40vh] sm:h-[45vh] w-[75vw] h-[35vh] pointer-events-none z-[1] flex items-end"
       >
         <svg
-          viewBox="0 0 800 700"
+          viewBox="0 0 900 650"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full object-cover filter drop-shadow-[0_20px_45px_rgba(6,91,182,0.16)]"
+          className="w-full h-full object-cover filter drop-shadow-[0_15px_35px_rgba(6,91,182,0.12)]"
         >
           <defs>
-            <linearGradient id="blueOrganicGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#1D4ED8" stopOpacity="0.88" />
-              <stop offset="45%" stopColor="#065BB6" stopOpacity="0.75" />
-              <stop offset="80%" stopColor="#60A5FA" stopOpacity="0.3" />
+            <linearGradient id="blueLiquidFlow" x1="0%" y1="100%" x2="80%" y2="0%">
+              <stop offset="0%" stopColor="#1D4ED8" stopOpacity="0.85" />
+              <stop offset="45%" stopColor="#065BB6" stopOpacity="0.7" />
+              <stop offset="80%" stopColor="#60A5FA" stopOpacity="0.25" />
               <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
             </linearGradient>
           </defs>
+          {/* Organic Liquid Wave Path with Bézier Curves */}
           <path
-            d="M-50,750 C120,750 200,640 320,540 C440,440 580,480 680,320 C740,180 620,60 520,-50 L-50,-50 Z"
-            fill="url(#blueOrganicGrad)"
+            d="M-50,700 C150,700 240,580 380,480 C520,380 660,420 780,260 C840,140 720,40 580,-50 L-50,-50 Z"
+            fill="url(#blueLiquidFlow)"
           />
-          {/* Thin Soft White Highlight Edge */}
+          {/* LAYER 2: Subtle White Glass Highlight Curve along Upper Edge */}
           <path
-            d="M0,700 C150,700 230,590 350,500 C470,410 600,440 680,310"
-            stroke="rgba(255,255,255,0.7)"
+            d="M-10,650 C170,650 250,540 390,450 C520,360 650,390 760,240"
+            stroke="rgba(255,255,255,0.75)"
             strokeWidth="3.5"
             fill="none"
-            filter="blur(2px)"
+            filter="blur(1.5px)"
           />
         </svg>
       </div>
 
-      {/* RIGHT ORGANIC GREEN LIQUID WAVE (Bottom-right corner, right: -5%, bottom: -12%) */}
+      {/* LAYER 1: ORGANIC GREEN LIQUID WAVE SVG (Bottom-right corner, right: -5vw, bottom: -10vh, width: 48vw, height: 42vh) */}
       <div
         ref={rightGreenWaveRef}
-        className="absolute -right-[5%] -bottom-[12%] w-[55vw] max-w-[800px] h-[50vh] sm:w-[52vw] sm:h-[52vh] w-[75vw] h-[35vh] pointer-events-none z-10 flex items-end justify-end"
+        className="absolute -right-[5vw] -bottom-[10vh] w-[50vw] sm:w-[48vw] h-[40vh] sm:h-[45vh] w-[75vw] h-[35vh] pointer-events-none z-[1] flex items-end justify-end"
       >
         <svg
-          viewBox="0 0 800 700"
+          viewBox="0 0 900 650"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full object-cover filter drop-shadow-[0_20px_45px_rgba(16,185,129,0.16)]"
+          className="w-full h-full object-cover filter drop-shadow-[0_15px_35px_rgba(16,185,129,0.12)]"
         >
           <defs>
-            <linearGradient id="greenOrganicGrad" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#34D399" stopOpacity="0.9" />
-              <stop offset="45%" stopColor="#10B981" stopOpacity="0.78" />
-              <stop offset="80%" stopColor="#0D9488" stopOpacity="0.3" />
+            <linearGradient id="greenLiquidFlow" x1="100%" y1="100%" x2="20%" y2="0%">
+              <stop offset="0%" stopColor="#34D399" stopOpacity="0.88" />
+              <stop offset="45%" stopColor="#10B981" stopOpacity="0.72" />
+              <stop offset="80%" stopColor="#0D9488" stopOpacity="0.25" />
               <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
             </linearGradient>
           </defs>
+          {/* Organic Liquid Wave Path with Bézier Curves */}
           <path
-            d="M850,750 C680,750 600,640 480,540 C360,440 220,480 120,320 C60,180 180,60 280,-50 L850,-50 Z"
-            fill="url(#greenOrganicGrad)"
+            d="M950,700 C750,700 660,580 520,480 C380,380 240,420 120,260 C60,140 180,40 320,-50 L950,-50 Z"
+            fill="url(#greenLiquidFlow)"
           />
-          {/* Thin Soft White Highlight Edge */}
+          {/* LAYER 2: Subtle White Glass Highlight Curve along Upper Edge */}
           <path
-            d="M800,700 C650,700 570,590 450,500 C330,410 200,440 120,310"
-            stroke="rgba(255,255,255,0.7)"
+            d="M910,650 C730,650 650,540 510,450 C380,360 250,390 140,240"
+            stroke="rgba(255,255,255,0.75)"
             strokeWidth="3.5"
             fill="none"
-            filter="blur(2px)"
+            filter="blur(1.5px)"
           />
         </svg>
       </div>
 
-      {/* STAR FURNITURE LOGO (Centered at top: 48%, Desktop: 52vw max 760px; Mobile: 78vw max 500px; NO CARD, NO BOX) */}
-      <div className="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex justify-center items-center w-[78vw] max-w-[500px] sm:w-[65vw] sm:max-w-[650px] lg:w-[52vw] lg:max-w-[760px]">
+      {/* LAYER 10: STAR FURNITURE LOGO (Centered at top: 47%, left: 50%, Desktop: 48vw–52vw max 720px; Mobile: 78vw–84vw max 500px; NO CARD, NO BOX) */}
+      <div className="absolute top-[47%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-[10] flex justify-center items-center w-[80vw] max-w-[500px] sm:w-[65vw] sm:max-w-[620px] lg:w-[50vw] lg:max-w-[720px]">
         <img
           ref={logoRef}
           src={getPublicAsset('logo.png')}
           alt="Star Furniture - Comfort • Quality • Trust"
-          className="w-full h-auto object-contain drop-shadow-[0_12px_28px_rgba(6,91,182,0.1)]"
+          className="w-full h-auto object-contain drop-shadow-[0_10px_25px_rgba(6,91,182,0.08)]"
         />
       </div>
     </div>
