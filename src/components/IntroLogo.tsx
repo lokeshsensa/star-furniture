@@ -144,23 +144,21 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         });
       }
 
-      // 4. PINNED CINEMATIC INTRO EXIT TRANSITION TO HERO
-      // When scrolling down, the logo scales 1 -> 1.08 and dissolves, while background expands
+      // 4. CLEAN CINEMATIC INTRO EXIT TRANSITION TO HERO (ScrollTrigger Scrub without DOM Pinning)
       if (introRef.current && logoRef.current) {
         const exitTl = gsap.timeline({
           scrollTrigger: {
             trigger: introRef.current,
             start: 'top top',
-            end: '+=80%',
-            pin: true,
-            scrub: 1,
+            end: 'bottom top',
+            scrub: 0.8,
           },
         });
 
         exitTl.to(logoRef.current, {
           scale: 1.08,
           opacity: 0,
-          filter: 'blur(12px)',
+          filter: 'blur(10px)',
           ease: 'power1.in',
         }, 0.0);
 
@@ -175,8 +173,8 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         exitTl.to(
           [leftBlueShapeRef.current, rightGreenShapeRef.current],
           {
-            scale: 1.15,
-            opacity: 0.2,
+            scale: 1.12,
+            opacity: 0.25,
             ease: 'none',
           },
           0.0
@@ -197,8 +195,8 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
     <section
       ref={introRef}
       id="intro-section"
-      className="relative w-screen h-screen min-h-screen overflow-hidden bg-[#FAFCFB] flex items-center justify-center select-none z-40"
-      style={{ width: '100vw', height: '100vh' }}
+      className="relative w-screen min-h-screen overflow-hidden bg-[#FAFCFB] flex items-center justify-center select-none z-40"
+      style={{ width: '100vw', minHeight: '100vh' }}
     >
       {/* TOP LEFT SUBTLE AMBIENT GLOW */}
       <div
@@ -212,7 +210,7 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         className="absolute -top-32 -right-32 w-[450px] h-[450px] rounded-full bg-gradient-to-bl from-[#10B981]/15 to-transparent blur-3xl pointer-events-none z-0"
       />
 
-      {/* LEFT LIQUID BLUE WAVE/BLOB (Positioned left: -15% to -25%, bottom: -10%, extending into lower-left 30%) */}
+      {/* LEFT LIQUID BLUE WAVE/BLOB (Positioned left: -18%, bottom: -12%, extending into lower-left 30%) */}
       <div
         ref={leftBlueShapeRef}
         className="absolute -left-[18%] -bottom-[12%] w-[58vw] max-w-[850px] h-[65vh] pointer-events-none z-0 flex items-end"
@@ -238,7 +236,7 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
         </svg>
       </div>
 
-      {/* RIGHT LIQUID GREEN WAVE/BLOB (Positioned right: -15% to -25%, bottom: -10%, extending into lower-right 30%) */}
+      {/* RIGHT LIQUID GREEN WAVE/BLOB (Positioned right: -18%, bottom: -12%, extending into lower-right 30%) */}
       <div
         ref={rightGreenShapeRef}
         className="absolute -right-[18%] -bottom-[12%] w-[58vw] max-w-[850px] h-[65vh] pointer-events-none z-0 flex items-end justify-end"
