@@ -1,6 +1,7 @@
 import React from 'react';
 import { MessageCircle, ArrowUp } from 'lucide-react';
 import { getWhatsAppLink } from '../data/products';
+import { getPublicAsset } from '../utils/assets';
 
 export const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -18,7 +19,7 @@ export const Footer: React.FC = () => {
           <div className="md:col-span-5 flex flex-col items-start">
             <a href="#hero" className="flex items-center gap-3">
               <img
-                src="/logo.png"
+                src={getPublicAsset('logo.png')}
                 alt="Star Furniture Logo"
                 className="h-10 w-auto object-contain brightness-0 invert"
               />

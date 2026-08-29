@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, MessageCircle, Sparkles, Award } from 'lucide-react';
 import { getWhatsAppLink } from '../data/products';
+import { getPublicAsset } from '../utils/assets';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -129,7 +130,7 @@ export const Hero: React.FC = () => {
           <div className="relative w-full aspect-[4/3] rounded-[36px] overflow-hidden shadow-2xl border border-[rgba(255,255,255,0.9)] bg-white/40">
             <img
               ref={heroImgRef}
-              src="/assets/hero.jpg"
+              src={getPublicAsset('assets/hero.jpg')}
               alt="Star Furniture Living Room Showcase"
               className="w-full h-full object-cover transform"
             />

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Award, Users, Compass, ShieldCheck } from 'lucide-react';
+import { getPublicAsset } from '../utils/assets';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -88,7 +89,7 @@ export const About: React.FC = () => {
           <div ref={leftColRef} className="lg:col-span-6 relative">
             <div className="relative rounded-[36px] overflow-hidden shadow-2xl border border-[rgba(255,255,255,0.9)] aspect-[4/3] bg-white/40">
               <img
-                src="/assets/reveal2.jpg"
+                src={getPublicAsset('assets/reveal2.jpg')}
                 alt="Star Furniture Store Atmosphere"
                 className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000"
               />

@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MessageCircle, PhoneCall, ArrowRight } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../data/products';
+import { getPublicAsset } from '../utils/assets';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -111,7 +112,7 @@ export const FinalReveal: React.FC = () => {
             >
               <img
                 ref={personImgRef}
-                src="/person.png"
+                src={getPublicAsset('person.png')}
                 alt="Star Furniture Founder / Representative"
                 className="w-full h-full object-cover object-top"
               />

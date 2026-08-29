@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Sparkles, Ruler, Layers, MessageCircle, ShieldCheck } from 'lucide-react';
 import { getWhatsAppLink } from '../data/products';
+import { getPublicAsset } from '../utils/assets';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -69,7 +70,7 @@ export const FeaturedProductSection: React.FC = () => {
           {/* LEFT: Large Furniture Image */}
           <div ref={leftColRef} className="lg:col-span-6 relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-xl border border-[rgba(255,255,255,0.9)] bg-white/40">
             <img
-              src="/assets/prod_sofa.jpg"
+              src={getPublicAsset('assets/prod_sofa.jpg')}
               alt="Modern Sectional Sofa"
               className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
             />

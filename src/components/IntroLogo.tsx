@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { getPublicAsset } from '../utils/assets';
 
 interface IntroLogoProps {
   onComplete?: () => void;
@@ -171,7 +172,7 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
       <div className="relative z-10 flex flex-col items-center justify-center px-4 max-w-4xl w-full text-center">
         <img
           ref={logoRef}
-          src="/logo.png"
+          src={getPublicAsset('logo.png')}
           alt="Star Furniture - Comfort • Quality • Trust"
           className="w-[80%] sm:w-[70%] md:w-[62%] max-w-[680px] h-auto object-contain drop-shadow-[0_15px_30px_rgba(6,91,182,0.12)]"
         />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, MessageCircle } from 'lucide-react';
 import { getWhatsAppLink } from '../data/products';
+import { getPublicAsset } from '../utils/assets';
 
 export const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -59,7 +60,7 @@ export const Navbar: React.FC = () => {
         {/* Star Furniture Logo Image */}
         <a href="#hero" className="flex items-center gap-3 group">
           <img
-            src="/logo.png"
+            src={getPublicAsset('logo.png')}
             alt="Star Furniture Logo"
             className="h-8 sm:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
