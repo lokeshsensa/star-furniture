@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { productsData, type Product } from '../data/products';
 import { ProductCard } from './ProductCard';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 interface ProductShowcaseProps {
   onSelectProduct: (product: Product) => void;
@@ -22,48 +23,57 @@ export const ProductShowcase: React.FC<ProductShowcaseProps> = ({ onSelectProduc
     ? productsData
     : productsData.filter((p) => p.category === activeCategory);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Header Animation
-      gsap.from(headerRef.current, {
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: headerRef.current,
-          start: 'top 85%',
-        },
-      });
-
-      // Product Cards GSAP ScrollTrigger Reveal: y 100, opacity 0, scale 0.95 -> y 0, opacity 1, scale 1
-      if (gridRef.current) {
-        const cards = gridRef.current.querySelectorAll('.product-card');
+  useGSAP(
+    () => {
+      // 1. Header Animation
+      if (headerRef.current) {
         gsap.fromTo(
-          cards,
-          {
-            opacity: 0,
-            y: 100,
-            scale: 0.95,
-          },
+          headerRef.current,
+          { opacity: 0, y: 40 },
           {
             opacity: 1,
             y: 0,
-            scale: 1,
             duration: 0.9,
             ease: 'power3.out',
-            stagger: 0.1,
             scrollTrigger: {
-              trigger: gridRef.current,
-              start: 'top 80%',
+              trigger: headerRef.current,
+              start: 'top 85%',
+              once: true,
             },
           }
         );
       }
-    }, sectionRef);
 
-    return () => ctx.revert();
-  }, [activeCategory]);
+      // 2. Product Cards Single Scoped GSAP ScrollTrigger Reveal (y: 80, opacity: 0, scale: 0.95 -> y: 0, opacity: 1, scale: 1)
+      if (gridRef.current) {
+        const cards = gridRef.current.querySelectorAll('.product-card');
+        if (cards.length > 0) {
+          gsap.fromTo(
+            cards,
+            {
+              opacity: 0,
+              y: 80,
+              scale: 0.95,
+            },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.85,
+              ease: 'power3.out',
+              stagger: 0.08,
+              scrollTrigger: {
+                trigger: gridRef.current,
+                start: 'top 80%',
+                once: true,
+              },
+            }
+          );
+        }
+      }
+    },
+    { scope: sectionRef, dependencies: [activeCategory] }
+  );
 
   return (
     <section ref={sectionRef} id="products" className="section-padding relative overflow-hidden">

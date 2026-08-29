@@ -1,59 +1,65 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight } from 'lucide-react';
 import { collectionsData } from '../data/products';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export const Collections: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Header Animation
-      gsap.from(headerRef.current, {
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: headerRef.current,
-          start: 'top 85%',
-        },
-      });
-
-      // Category Cards Staggered Animation
-      // Initial: opacity 0, y 100, scale 0.92 -> opacity 1, y 0, scale 1
-      if (gridRef.current) {
-        const cards = gridRef.current.children;
+  useGSAP(
+    () => {
+      // 1. Header ScrollTrigger Reveal
+      if (headerRef.current) {
         gsap.fromTo(
-          cards,
+          headerRef.current,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: headerRef.current,
+              start: 'top 85%',
+              once: true,
+            },
+          }
+        );
+      }
+
+      // 2. Single Scoped GSAP ScrollTrigger for Category Cards Group (NOT individual triggers)
+      if (gridRef.current && gridRef.current.children.length > 0) {
+        gsap.fromTo(
+          gridRef.current.children,
           {
             opacity: 0,
-            y: 100,
-            scale: 0.92,
+            y: 70,
+            scale: 0.96,
           },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.95,
+            duration: 0.9,
             ease: 'power3.out',
             stagger: 0.1,
             scrollTrigger: {
               trigger: gridRef.current,
               start: 'top 80%',
+              once: true,
             },
           }
         );
       }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+    },
+    { scope: sectionRef }
+  );
 
   return (
     <section ref={sectionRef} id="collections" className="section-padding relative overflow-hidden">
@@ -88,12 +94,12 @@ export const Collections: React.FC = () => {
               {/* Subtle Blue Glow on Hover */}
               <div className="absolute -inset-1 rounded-[32px] bg-gradient-to-tr from-[#065BB6]/0 via-[#065BB6]/0 to-[#065BB6]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-              {/* Large Image Container with Hover Zoom (scale 1 -> 1.06) */}
+              {/* Large Image Container with Transform-Only Hover Zoom (scale 1 -> 1.04) */}
               <div className="relative w-full h-56 overflow-hidden rounded-t-[32px]">
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-full h-full object-cover transform group-hover:scale-[1.06] transition-transform duration-700 ease-out"
+                  className="w-full h-full object-cover transform group-hover:scale-[1.04] transition-transform duration-700 ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[rgba(15,23,42,0.45)] via-transparent to-transparent opacity-60 group-hover:opacity-30 transition-opacity duration-500" />
                 

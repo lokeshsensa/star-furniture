@@ -1,86 +1,135 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MessageCircle, PhoneCall, ArrowRight } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '../data/products';
 import { getPublicAsset } from '../utils/assets';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export const FinalReveal: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const personImgRef = useRef<HTMLImageElement>(null);
   const rightPanelRef = useRef<HTMLDivElement>(null);
+  const whatsappBtnRef = useRef<HTMLAnchorElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // 1. Initial State for Person Image (LEFT -> RIGHT clip-path reveal)
-      gsap.set(imageContainerRef.current, {
-        clipPath: 'inset(0 100% 0 0)',
-        opacity: 1,
-      });
+  useGSAP(
+    () => {
+      // 1. Initial State Setup
+      if (imageContainerRef.current) {
+        gsap.set(imageContainerRef.current, {
+          clipPath: 'inset(0 100% 0 0)',
+          opacity: 1,
+        });
+      }
 
-      gsap.set(personImgRef.current, {
-        scale: 1.08,
-        xPercent: -5,
-      });
+      if (personImgRef.current) {
+        gsap.set(personImgRef.current, {
+          scale: 1.08,
+          xPercent: -5,
+        });
+      }
 
-      // 2. Initial State for Right WhatsApp Panel
-      gsap.set(rightPanelRef.current, {
-        opacity: 0,
-        x: 80,
-        scale: 0.95,
-      });
+      if (rightPanelRef.current) {
+        gsap.set(rightPanelRef.current, {
+          opacity: 0,
+          x: 80,
+          scale: 0.95,
+        });
+      }
 
-      // Timeline triggered when section enters viewport
-      const mainTl = gsap.timeline({
+      // 2. Coordinated Master Reveal Timeline (Trigger: top 80%)
+      const masterTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 75%',
-          toggleActions: 'play none none reverse',
+          start: 'top 80%',
+          once: true,
         },
       });
 
-      // PERSON IMAGE Reveal from Left -> Right (Duration 1.4s)
-      mainTl.to(imageContainerRef.current, {
-        clipPath: 'inset(0 0% 0 0)',
-        duration: 1.4,
-        ease: 'power3.out',
-      })
-      .to(personImgRef.current, {
-        scale: 1,
-        xPercent: 0,
-        duration: 1.4,
-        ease: 'power3.out',
-      }, 0.0)
-
-      // RIGHT WHATSAPP PANEL Reveal (Starts ~0.3s after image reveal begins)
-      .to(rightPanelRef.current, {
-        opacity: 1,
-        x: 0,
-        scale: 1,
-        duration: 1.1,
-        ease: 'power3.out',
-      }, 0.3);
-
-      // Subtle parallax while scrolling
-      if (personImgRef.current) {
-        gsap.to(personImgRef.current, {
-          yPercent: 6,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.5,
+      // PERSON IMAGE Reveal from LEFT -> RIGHT (Duration 1.45s)
+      if (imageContainerRef.current && personImgRef.current) {
+        masterTl.to(
+          imageContainerRef.current,
+          {
+            clipPath: 'inset(0 0% 0 0)',
+            duration: 1.45,
+            ease: 'power3.out',
           },
-        });
-      }
-    }, sectionRef);
+          0.0
+        );
 
-    return () => ctx.revert();
-  }, []);
+        masterTl.to(
+          personImgRef.current,
+          {
+            scale: 1,
+            xPercent: 0,
+            duration: 1.45,
+            ease: 'power3.out',
+          },
+          0.0
+        );
+      }
+
+      // WHATSAPP PANEL Reveal from RIGHT -> LEFT (Starts ~0.3s after image reveal begins)
+      if (rightPanelRef.current) {
+        masterTl.to(
+          rightPanelRef.current,
+          {
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            duration: 1.1,
+            ease: 'power3.out',
+          },
+          0.3
+        );
+      }
+
+      // 3. Subtle Parallax for Desktop with MatchMedia
+      const mm = gsap.matchMedia();
+
+      mm.add('(min-width: 768px)', () => {
+        if (personImgRef.current && sectionRef.current) {
+          gsap.to(personImgRef.current, {
+            yPercent: 5,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1.5,
+            },
+          });
+        }
+      });
+
+      // 4. WhatsApp Button Hover Animation using GSAP (transform only)
+      if (whatsappBtnRef.current) {
+        const btn = whatsappBtnRef.current;
+        const hoverAnimation = gsap.to(btn, {
+          scale: 1.03,
+          duration: 0.25,
+          ease: 'power1.out',
+          paused: true,
+        });
+
+        const onMouseEnter = () => hoverAnimation.play();
+        const onMouseLeave = () => hoverAnimation.reverse();
+
+        btn.addEventListener('mouseenter', onMouseEnter);
+        btn.addEventListener('mouseleave', onMouseLeave);
+
+        return () => {
+          btn.removeEventListener('mouseenter', onMouseEnter);
+          btn.removeEventListener('mouseleave', onMouseLeave);
+        };
+      }
+    },
+    { scope: sectionRef }
+  );
 
   const whatsappMessage = encodeURIComponent(
     "Hi, I visited the Star Furniture website and would like to know more about your furniture collection."
@@ -131,7 +180,7 @@ export const FinalReveal: React.FC = () => {
 
           {/* RIGHT SIDE: Approximately 40–45% (5/12 cols) — WHATSAPP CONTACT PANEL */}
           <div ref={rightPanelRef} className="lg:col-span-5">
-            <div className="p-8 sm:p-12 rounded-[40px] bg-[rgba(255,255,255,0.7)] backdrop-blur-2xl border border-[rgba(255,255,255,0.95)] shadow-2xl relative overflow-hidden">
+            <div className="p-8 sm:p-12 rounded-[40px] bg-[rgba(255,255,255,0.75)] backdrop-blur-2xl border border-[rgba(255,255,255,0.95)] shadow-2xl relative overflow-hidden">
               {/* Inner ambient glow */}
               <div className="absolute -top-20 -right-20 w-48 h-48 rounded-full bg-[rgba(37,211,102,0.15)] blur-3xl pointer-events-none" />
 
@@ -162,10 +211,11 @@ export const FinalReveal: React.FC = () => {
               {/* Button */}
               <div className="mt-8 pt-6 border-t border-[rgba(6,91,182,0.08)]">
                 <a
+                  ref={whatsappBtnRef}
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="whatsapp-ripple-btn w-full py-5 px-8 rounded-full bg-[#25D366] hover:bg-[#1EBE57] text-white font-medium text-base transition-all duration-300 flex items-center justify-center gap-3.5 shadow-xl shadow-[rgba(37,211,102,0.35)] hover:shadow-2xl hover:scale-[1.02] active:scale-98"
+                  className="whatsapp-ripple-btn w-full py-5 px-8 rounded-full bg-[#25D366] hover:bg-[#1EBE57] text-white font-medium text-base transition-colors duration-300 flex items-center justify-center gap-3.5 shadow-xl shadow-[rgba(37,211,102,0.35)] active:scale-98"
                 >
                   <MessageCircle className="w-6 h-6 fill-current" />
                   <span className="uppercase tracking-wider font-semibold">CHAT ON WHATSAPP</span>

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { X, MessageCircle, CheckCircle2, Ruler, Sparkles, Layers } from 'lucide-react';
 import { getWhatsAppLink, type Product } from '../data/products';
+
+gsap.registerPlugin(useGSAP);
 
 interface ProductModalProps {
   product: Product | null;
@@ -12,11 +15,11 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
   const [selectedFinish, setSelectedFinish] = useState<string>('');
   const overlayRef = useRef<HTMLDivElement>(null);
   const modalBoxRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (product) {
       document.body.style.overflow = 'hidden';
-
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
           handleClose();
@@ -24,60 +27,84 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
       };
       window.addEventListener('keydown', handleKeyDown);
 
-      const ctx = gsap.context(() => {
-        gsap.fromTo(
+      return () => {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [product]);
+
+  useGSAP(
+    () => {
+      if (product && overlayRef.current && modalBoxRef.current) {
+        const tl = gsap.timeline();
+
+        tl.fromTo(
           overlayRef.current,
           { opacity: 0 },
-          { opacity: 1, duration: 0.35, ease: 'power2.out' }
+          { opacity: 1, duration: 0.3, ease: 'power2.out' },
+          0.0
         );
-        gsap.fromTo(
+
+        tl.fromTo(
           modalBoxRef.current,
           {
             opacity: 0,
-            scale: 0.9,
-            filter: 'blur(16px)',
-            y: 30,
+            scale: 0.94,
+            filter: 'blur(12px)',
           },
           {
             opacity: 1,
             scale: 1,
             filter: 'blur(0px)',
-            y: 0,
-            duration: 0.5,
+            duration: 0.45,
             ease: 'power3.out',
-          }
+          },
+          0.05
         );
-      });
 
-      return () => {
-        document.body.style.overflow = '';
-        window.removeEventListener('keydown', handleKeyDown);
-        ctx.revert();
-      };
-    }
-  }, [product]);
+        if (contentRef.current) {
+          tl.fromTo(
+            contentRef.current,
+            { y: 20, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.4, ease: 'power3.out' },
+            0.15
+          );
+        }
+      }
+    },
+    { dependencies: [product] }
+  );
 
   if (!product) return null;
 
   const currentFinish = selectedFinish || product.finishes[0];
 
   const handleClose = () => {
-    gsap.to(modalBoxRef.current, {
-      opacity: 0,
-      scale: 0.92,
-      filter: 'blur(12px)',
-      duration: 0.3,
-      ease: 'power2.in',
-    });
-    gsap.to(overlayRef.current, {
-      opacity: 0,
-      duration: 0.3,
-      ease: 'power2.in',
-      onComplete: () => {
-        document.body.style.overflow = '';
-        onClose();
-      },
-    });
+    if (modalBoxRef.current && overlayRef.current) {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          document.body.style.overflow = '';
+          onClose();
+        },
+      });
+
+      tl.to(modalBoxRef.current, {
+        opacity: 0,
+        scale: 0.94,
+        filter: 'blur(10px)',
+        duration: 0.25,
+        ease: 'power2.in',
+      }, 0.0);
+
+      tl.to(overlayRef.current, {
+        opacity: 0,
+        duration: 0.25,
+        ease: 'power2.in',
+      }, 0.05);
+    } else {
+      onClose();
+    }
   };
 
   return (
@@ -114,7 +141,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) 
         </div>
 
         {/* Right Column: Details & WhatsApp Action */}
-        <div className="md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
+        <div ref={contentRef} className="md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
           <div>
             {/* Category & Price */}
             <div className="flex items-center justify-between gap-2">

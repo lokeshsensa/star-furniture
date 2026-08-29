@@ -1,68 +1,117 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, MessageCircle, Sparkles, Award } from 'lucide-react';
 import { getWhatsAppLink } from '../data/products';
 import { getPublicAsset } from '../utils/assets';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export const Hero: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const textColRef = useRef<HTMLDivElement>(null);
-  const imageColRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+  const imageFrameRef = useRef<HTMLDivElement>(null);
   const heroImgRef = useRef<HTMLImageElement>(null);
   const glassCardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!sectionRef.current) return;
+  useGSAP(
+    () => {
+      // 1. Initial State Setup
+      gsap.set(headingRef.current, { y: 60, opacity: 0 });
+      gsap.set(descriptionRef.current, { y: 35, opacity: 0 });
+      gsap.set(buttonsRef.current, { y: 25, opacity: 0 });
+      gsap.set(imageFrameRef.current, { scale: 1.08, opacity: 0 });
+      gsap.set(glassCardRef.current, { y: 30, opacity: 0 });
 
-    const ctx = gsap.context(() => {
+      // 2. Hero Reveal Sequence Timeline
       const tl = gsap.timeline({ delay: 0.2 });
 
-      if (textColRef.current) {
-        tl.fromTo(
-          textColRef.current,
-          { opacity: 0, x: -80 },
-          { opacity: 1, x: 0, duration: 1.3, ease: 'power3.out' }
+      if (headingRef.current) {
+        tl.to(headingRef.current, {
+          y: 0,
+          opacity: 1,
+          duration: 1.1,
+          ease: 'power3.out',
+        });
+      }
+
+      if (descriptionRef.current) {
+        tl.to(
+          descriptionRef.current,
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.9,
+            ease: 'power3.out',
+          },
+          '-=0.7'
         );
       }
 
-      if (imageColRef.current) {
-        tl.fromTo(
-          imageColRef.current,
-          { opacity: 0, scale: 1.12 },
-          { opacity: 1, scale: 1, duration: 1.4, ease: 'power3.out' },
-          '-=1.0'
+      if (buttonsRef.current) {
+        tl.to(
+          buttonsRef.current,
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+          },
+          '-=0.6'
+        );
+      }
+
+      if (imageFrameRef.current) {
+        tl.to(
+          imageFrameRef.current,
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 1.3,
+            ease: 'power3.out',
+          },
+          '-=0.9'
         );
       }
 
       if (glassCardRef.current) {
-        tl.fromTo(
+        tl.to(
           glassCardRef.current,
-          { opacity: 0, y: 35 },
-          { opacity: 1, y: 0, duration: 0.9, ease: 'back.out(1.4)' },
-          '-=0.5'
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'back.out(1.4)',
+          },
+          '-=0.4'
         );
       }
 
-      if (heroImgRef.current && sectionRef.current) {
-        gsap.to(heroImgRef.current, {
-          yPercent: 10,
-          scale: 1.08,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1.2,
-          },
-        });
-      }
-    }, sectionRef);
+      // 3. Responsive Parallax Constraints using gsap.matchMedia()
+      const mm = gsap.matchMedia();
 
-    return () => ctx.revert();
-  }, []);
+      // Desktop Only: Parallax scroll
+      mm.add('(min-width: 768px)', () => {
+        if (heroImgRef.current && sectionRef.current) {
+          gsap.to(heroImgRef.current, {
+            yPercent: 8,
+            scale: 1.06,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 1.2,
+            },
+          });
+        }
+      });
+    },
+    { scope: sectionRef }
+  );
 
   return (
     <section
@@ -78,7 +127,7 @@ export const Hero: React.FC = () => {
       <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center min-h-[80vh]">
         
         {/* LEFT COLUMN: Text & CTAs */}
-        <div ref={textColRef} className="lg:col-span-6 flex flex-col items-start">
+        <div className="lg:col-span-6 flex flex-col items-start">
           {/* Label */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(255,255,255,0.75)] backdrop-blur-md border border-[rgba(255,255,255,0.9)] shadow-sm mb-6">
             <Sparkles className="w-4 h-4 text-[#065BB6]" />
@@ -88,18 +137,24 @@ export const Hero: React.FC = () => {
           </div>
 
           {/* Heading */}
-          <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-[#1E293B] leading-[1.1] tracking-tight">
+          <h1
+            ref={headingRef}
+            className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-[#1E293B] leading-[1.1] tracking-tight"
+          >
             Designed for <br />
             <span className="text-[#065BB6]">Comfort.</span> Built for <span className="text-[#0D9488]">Life.</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="mt-6 text-base sm:text-lg text-[#475569] font-light leading-relaxed max-w-xl">
+          <p
+            ref={descriptionRef}
+            className="mt-6 text-base sm:text-lg text-[#475569] font-light leading-relaxed max-w-xl"
+          >
             Discover furniture that combines elegance, durability and unmatched comfort to elevate your space.
           </p>
 
           {/* Buttons */}
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div ref={buttonsRef} className="mt-8 flex flex-wrap items-center gap-4">
             <a
               href="#collections"
               className="group px-8 py-4 rounded-full bg-[#065BB6] hover:bg-[#0F4B9C] text-white font-medium text-sm transition-all duration-300 shadow-xl shadow-[rgba(6,91,182,0.25)] hover:shadow-2xl hover:scale-[1.02] flex items-center gap-3"
@@ -134,8 +189,11 @@ export const Hero: React.FC = () => {
         </div>
 
         {/* RIGHT COLUMN: Hero Furniture Image + Overlapping Glass Card */}
-        <div ref={imageColRef} className="lg:col-span-6 relative flex justify-center items-center">
-          <div className="relative w-full aspect-[4/3] rounded-[36px] overflow-hidden shadow-2xl border border-[rgba(255,255,255,0.9)] bg-white/40">
+        <div className="lg:col-span-6 relative flex justify-center items-center">
+          <div
+            ref={imageFrameRef}
+            className="relative w-full aspect-[4/3] rounded-[36px] overflow-hidden shadow-2xl border border-[rgba(255,255,255,0.9)] bg-white/40"
+          >
             <img
               ref={heroImgRef}
               src={getPublicAsset('assets/hero.jpg')}

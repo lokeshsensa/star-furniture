@@ -1,75 +1,66 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Award, Users, Compass, ShieldCheck } from 'lucide-react';
 import { getPublicAsset } from '../utils/assets';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export const About: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
-  const rightColRef = useRef<HTMLDivElement>(null);
   const statsContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Left image reveal
-      gsap.fromTo(
-        leftColRef.current,
-        { opacity: 0, x: -50 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 1.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-          },
-        }
-      );
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+          once: true,
+        },
+      });
 
-      // Right text reveal
-      gsap.fromTo(
-        rightColRef.current,
-        { opacity: 0, x: 50 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 1.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-          },
-        }
-      );
+      // 1. Heading Reveal: y 50 -> 0, opacity 0 -> 1
+      if (headingRef.current) {
+        tl.fromTo(
+          headingRef.current,
+          { opacity: 0, y: 50 },
+          { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' },
+          0.0
+        );
+      }
 
-      // Statistics GSAP ScrollTrigger animation
-      if (statsContainerRef.current) {
-        const statCards = statsContainerRef.current.children;
-        gsap.fromTo(
-          statCards,
-          { opacity: 0, y: 35, scale: 0.9 },
+      // 2. Image Reveal: scale 1.06 -> 1, opacity 0 -> 1
+      if (leftColRef.current) {
+        tl.fromTo(
+          leftColRef.current,
+          { opacity: 0, scale: 1.06 },
+          { opacity: 1, scale: 1, duration: 1.1, ease: 'power3.out' },
+          0.15
+        );
+      }
+
+      // 3. Statistics Cards Reveal: y 30 -> 0, opacity 0 -> 1 with stagger
+      if (statsContainerRef.current && statsContainerRef.current.children.length > 0) {
+        tl.fromTo(
+          statsContainerRef.current.children,
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
             y: 0,
-            scale: 1,
-            duration: 0.8,
-            ease: 'back.out(1.4)',
-            stagger: 0.15,
-            scrollTrigger: {
-              trigger: statsContainerRef.current,
-              start: 'top 85%',
-            },
-          }
+            duration: 0.85,
+            ease: 'power3.out',
+            stagger: 0.12,
+          },
+          0.35
         );
       }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+    },
+    { scope: sectionRef }
+  );
 
   const stats = [
     { value: '15+', label: 'YEARS OF EXPERIENCE', icon: Award },
@@ -91,7 +82,7 @@ export const About: React.FC = () => {
               <img
                 src={getPublicAsset('assets/reveal2.jpg')}
                 alt="Star Furniture Store Atmosphere"
-                className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000"
+                className="w-full h-full object-cover transform hover:scale-[1.04] transition-transform duration-1000"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[rgba(15,23,42,0.35)] via-transparent to-transparent pointer-events-none" />
             </div>
@@ -111,22 +102,24 @@ export const About: React.FC = () => {
           </div>
 
           {/* RIGHT COLUMN: Copy & Statistics Glass Cards */}
-          <div ref={rightColRef} className="lg:col-span-6 flex flex-col justify-center">
-            <span className="text-xs uppercase tracking-[0.3em] font-semibold text-[#065BB6]">
-              ABOUT STAR FURNITURE
-            </span>
-            
-            <h2 className="font-serif text-4xl sm:text-5xl font-bold text-[#1E293B] mt-3 leading-tight">
-              Comfort. Quality. Trust.
-            </h2>
+          <div className="lg:col-span-6 flex flex-col justify-center">
+            <div ref={headingRef}>
+              <span className="text-xs uppercase tracking-[0.3em] font-semibold text-[#065BB6]">
+                ABOUT STAR FURNITURE
+              </span>
+              
+              <h2 className="font-serif text-4xl sm:text-5xl font-bold text-[#1E293B] mt-3 leading-tight">
+                Comfort. Quality. Trust.
+              </h2>
 
-            <h3 className="font-serif text-2xl text-[#065BB6] mt-4 font-semibold">
-              Furniture Made for Living
-            </h3>
+              <h3 className="font-serif text-2xl text-[#065BB6] mt-4 font-semibold">
+                Furniture Made for Living
+              </h3>
 
-            <p className="mt-4 text-base sm:text-lg text-[#475569] font-light leading-relaxed">
-              At Star Furniture, we believe furniture should be more than beautiful. It should be comfortable, durable and designed to become part of your everyday life.
-            </p>
+              <p className="mt-4 text-base sm:text-lg text-[#475569] font-light leading-relaxed">
+                At Star Furniture, we believe furniture should be more than beautiful. It should be comfortable, durable and designed to become part of your everyday life.
+              </p>
+            </div>
 
             {/* Statistics Cards Grid */}
             <div ref={statsContainerRef} className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">

@@ -1,53 +1,59 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Sparkles, Ruler, Layers, MessageCircle, ShieldCheck } from 'lucide-react';
 import { getWhatsAppLink } from '../data/products';
 import { getPublicAsset } from '../utils/assets';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export const FeaturedProductSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
   const rightColRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        leftColRef.current,
-        { opacity: 0, x: -60, scale: 0.96 },
-        {
-          opacity: 1,
-          x: 0,
-          scale: 1,
-          duration: 1.2,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 75%',
-          },
-        }
-      );
+  useGSAP(
+    () => {
+      if (leftColRef.current) {
+        gsap.fromTo(
+          leftColRef.current,
+          { opacity: 0, x: -50, scale: 0.96 },
+          {
+            opacity: 1,
+            x: 0,
+            scale: 1,
+            duration: 1.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 75%',
+              once: true,
+            },
+          }
+        );
+      }
 
-      gsap.fromTo(
-        rightColRef.current,
-        { opacity: 0, x: 60 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 1.2,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 75%',
-          },
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+      if (rightColRef.current) {
+        gsap.fromTo(
+          rightColRef.current,
+          { opacity: 0, x: 50 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 1.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 75%',
+              once: true,
+            },
+          }
+        );
+      }
+    },
+    { scope: sectionRef }
+  );
 
   const featuredProductName = "Modern Sectional Sofa";
 
@@ -72,7 +78,7 @@ export const FeaturedProductSection: React.FC = () => {
             <img
               src={getPublicAsset('assets/prod_sofa.jpg')}
               alt="Modern Sectional Sofa"
-              className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+              className="w-full h-full object-cover transform hover:scale-[1.04] transition-transform duration-700"
             />
             <div className="absolute top-4 left-4 px-4 py-1.5 rounded-full bg-[rgba(255,255,255,0.85)] backdrop-blur-md text-xs font-semibold uppercase tracking-wider text-[#065BB6] border border-[rgba(255,255,255,0.9)] shadow-sm">
               Spotlight Collection

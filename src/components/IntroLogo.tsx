@@ -1,6 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { getPublicAsset } from '../utils/assets';
+
+gsap.registerPlugin(useGSAP);
 
 interface IntroLogoProps {
   onComplete?: () => void;
@@ -9,61 +12,48 @@ interface IntroLogoProps {
 export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLImageElement>(null);
+  const taglineRef = useRef<HTMLDivElement>(null);
   const leftWaveRef = useRef<HTMLDivElement>(null);
   const rightWaveRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!containerRef.current) return;
+  useGSAP(
+    () => {
+      // 1. Initial State Setup
+      gsap.set(leftWaveRef.current, { xPercent: -35, opacity: 0 });
+      gsap.set(rightWaveRef.current, { xPercent: 35, opacity: 0 });
+      gsap.set(logoRef.current, {
+        opacity: 0,
+        scale: 0.65,
+        filter: 'blur(15px)',
+      });
+      gsap.set(taglineRef.current, { opacity: 0, y: 20 });
+      gsap.set(glowRef.current, { opacity: 0, scale: 0.6 });
+      gsap.set(scrollIndicatorRef.current, { opacity: 0, y: 20 });
 
-    const ctx = gsap.context(() => {
-      // Setup initial animation states safely
-      if (leftWaveRef.current) gsap.set(leftWaveRef.current, { xPercent: -30, opacity: 0 });
-      if (rightWaveRef.current) gsap.set(rightWaveRef.current, { xPercent: 30, opacity: 0 });
-      if (logoRef.current) {
-        gsap.set(logoRef.current, {
-          opacity: 0,
-          scale: 0.8,
-          filter: 'blur(16px)',
-        });
-      }
-      if (glowRef.current) gsap.set(glowRef.current, { opacity: 0, scale: 0.6 });
-      if (scrollIndicatorRef.current) gsap.set(scrollIndicatorRef.current, { opacity: 0, y: 20 });
-
-      // GSAP Entrance Timeline
-      const tl = gsap.timeline({
+      // 2. Master Opening Sequence Timeline
+      const masterTl = gsap.timeline({
         onComplete: () => {
           if (onComplete) onComplete();
         },
       });
 
-      const targetsToAnimate = [leftWaveRef.current, rightWaveRef.current].filter(Boolean);
-      if (targetsToAnimate.length > 0) {
-        tl.to(targetsToAnimate, {
+      // 0.0s: Liquid Waves slide in
+      const waveTargets = [leftWaveRef.current, rightWaveRef.current].filter(Boolean);
+      if (waveTargets.length > 0) {
+        masterTl.to(waveTargets, {
           xPercent: 0,
           opacity: 1,
           duration: 1.4,
           ease: 'power3.out',
           stagger: 0.15,
-        });
+        }, 0.0);
       }
 
-      if (glowRef.current) {
-        tl.to(
-          glowRef.current,
-          {
-            opacity: 0.8,
-            scale: 1,
-            duration: 1.2,
-            ease: 'power2.out',
-          },
-          '-=1.1'
-        );
-      }
-
+      // 0.2s - 1.4s: Logo scale 0.65 -> 1, opacity 0 -> 1, blur 15px -> 0
       if (logoRef.current) {
-        tl.to(
+        masterTl.to(
           logoRef.current,
           {
             opacity: 1,
@@ -72,48 +62,76 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
             duration: 1.3,
             ease: 'power3.out',
           },
-          '-=1.0'
+          0.2
         );
       }
 
+      // Ambient center glow
+      if (glowRef.current) {
+        masterTl.to(
+          glowRef.current,
+          {
+            opacity: 0.85,
+            scale: 1,
+            duration: 1.2,
+            ease: 'power2.out',
+          },
+          0.3
+        );
+      }
+
+      // Tagline Reveal: COMFORT • QUALITY • TRUST (overlaps end of logo animation)
+      if (taglineRef.current) {
+        masterTl.to(
+          taglineRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+          },
+          0.95
+        );
+      }
+
+      // Mouse Scroll Indicator Reveal
       if (scrollIndicatorRef.current) {
-        tl.to(
+        masterTl.to(
           scrollIndicatorRef.current,
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.7,
             ease: 'power2.out',
           },
-          '-=0.4'
+          1.2
         );
       }
 
+      // Subtle slow floating movement for background waves
       if (leftWaveRef.current) {
         gsap.to(leftWaveRef.current, {
-          y: '+=15',
-          rotation: 1.5,
-          duration: 6,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
-      }
-
-      if (rightWaveRef.current) {
-        gsap.to(rightWaveRef.current, {
-          y: '-=15',
-          rotation: -1.5,
+          y: '+=12',
+          rotation: 1.2,
           duration: 7,
           repeat: -1,
           yoyo: true,
           ease: 'sine.inOut',
         });
       }
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, [onComplete]);
+      if (rightWaveRef.current) {
+        gsap.to(rightWaveRef.current, {
+          y: '-=12',
+          rotation: -1.2,
+          duration: 8,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
+      }
+    },
+    { scope: containerRef }
+  );
 
   const handleScrollClick = () => {
     const heroSection = document.getElementById('hero');
@@ -181,17 +199,29 @@ export const IntroLogo: React.FC<IntroLogoProps> = ({ onComplete }) => {
       {/* SOFT CENTER AMBIENT GLOW */}
       <div
         ref={glowRef}
-        className="absolute w-[600px] h-[600px] rounded-full bg-radial from-[#FFFFFF] via-[rgba(255,255,255,0.9)] to-transparent blur-3xl pointer-events-none z-0"
+        className="absolute w-[650px] h-[650px] rounded-full bg-radial from-[#FFFFFF] via-[rgba(255,255,255,0.9)] to-transparent blur-3xl pointer-events-none z-0"
       />
 
-      {/* CENTER STAR FURNITURE LOGO */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-4 max-w-4xl w-full text-center">
-        <img
-          ref={logoRef}
-          src={getPublicAsset('logo.png')}
-          alt="Star Furniture - Comfort • Quality • Trust"
-          className="w-[80%] sm:w-[70%] md:w-[62%] max-w-[680px] h-auto object-contain drop-shadow-[0_15px_30px_rgba(6,91,182,0.12)]"
-        />
+      {/* CENTER HUGE STAR FURNITURE LOGO (60-75% Desktop, 70-85% Mobile, NOT inside a card) */}
+      <div className="relative z-10 flex flex-col items-center justify-center px-4 max-w-5xl w-full text-center">
+        <div className="w-[80%] sm:w-[75%] md:w-[68%] lg:w-[62%] max-w-[850px] flex justify-center">
+          <img
+            ref={logoRef}
+            src={getPublicAsset('logo.png')}
+            alt="Star Furniture - Comfort • Quality • Trust"
+            className="w-full h-auto object-contain drop-shadow-[0_15px_30px_rgba(6,91,182,0.14)]"
+          />
+        </div>
+
+        {/* TAGLINE: COMFORT • QUALITY • TRUST */}
+        <div
+          ref={taglineRef}
+          className="mt-8 sm:mt-10 inline-flex items-center gap-3 px-8 py-3 rounded-full bg-[rgba(255,255,255,0.75)] backdrop-blur-xl border border-[rgba(6,91,182,0.15)] shadow-md"
+        >
+          <span className="text-xs sm:text-sm md:text-base uppercase tracking-[0.35em] text-[#065BB6] font-semibold">
+            COMFORT • QUALITY • TRUST
+          </span>
+        </div>
       </div>
 
       {/* SCROLL TO EXPLORE MOUSE INDICATOR */}

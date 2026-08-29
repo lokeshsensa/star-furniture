@@ -10,12 +10,12 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
   return (
     <div className="product-card group relative rounded-[32px] bg-[rgba(255,255,255,0.6)] backdrop-blur-xl border border-[rgba(255,255,255,0.85)] shadow-lg hover:shadow-2xl hover:bg-[rgba(255,255,255,0.9)] hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col justify-between">
-      {/* Large Image Container */}
+      {/* Large Image Container with Transform-Only Hover Zoom (scale: 1 -> 1.04) */}
       <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-[32px]">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
+          className="w-full h-full object-cover transform group-hover:scale-[1.04] transition-transform duration-700 ease-out"
         />
 
         {/* Category Badge */}
