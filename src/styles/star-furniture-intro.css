@@ -1,0 +1,90 @@
+/* STAR FURNITURE CINEMATIC INTRO STYLES */
+
+.star-intro {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #FFFFFF;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.intro-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: #FFFFFF;
+  z-index: 0;
+}
+
+.intro-liquid {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.intro-liquid-blue {
+  left: -5vw;
+  bottom: -5vh;
+  width: 45vw;
+  height: 35vh;
+}
+
+.intro-liquid-green {
+  right: -5vw;
+  bottom: -5vh;
+  width: 45vw;
+  height: 35vh;
+}
+
+.star-intro-logo {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 48vw;
+  max-width: 720px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 25px rgba(6, 91, 182, 0.08));
+}
+
+@media (max-width: 1024px) {
+  .star-intro-logo {
+    width: 65vw;
+  }
+}
+
+@media (max-width: 640px) {
+  .star-intro-logo {
+    width: 82vw;
+    max-width: 500px;
+  }
+  .intro-liquid-blue {
+    width: 70vw;
+    height: 28vh;
+    left: -8vw;
+    bottom: -4vh;
+  }
+  .intro-liquid-green {
+    width: 70vw;
+    height: 28vh;
+    right: -8vw;
+    bottom: -4vh;
+  }
+}

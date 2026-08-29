@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ShopProvider, useShop } from './context/ShopContext';
-import { IntroLogo } from './components/IntroLogo';
+import { StarFurnitureIntro } from './components/StarFurnitureIntro';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { ShopByCategory } from './components/ShopByCategory';
@@ -71,9 +71,9 @@ const AppContent: React.FC = () => {
     <div className="relative min-h-screen bg-[#FAFBFD] text-[#1E293B] overflow-x-hidden select-none">
       <CustomCursor />
       
-      {/* Page 01: Full Screen Star Furniture Cinematic Splash Screen (Automatic ~4s sequence) */}
+      {/* Page 01: Full Screen Star Furniture Cinematic Splash Screen (Automatic ~3.25s sequence) */}
       {activeView === 'home' && showIntro && (
-        <IntroLogo onComplete={() => setShowIntro(false)} />
+        <StarFurnitureIntro onComplete={() => setShowIntro(false)} />
       )}
 
       {/* Floating Glass Navbar */}
