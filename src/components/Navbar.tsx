@@ -1,142 +1,211 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, MessageCircle } from 'lucide-react';
+import { Menu, X, MessageCircle, Search, Heart, ShoppingBag } from 'lucide-react';
+import { useShop, type PageView } from '../context/ShopContext';
 import { getWhatsAppLink } from '../data/products';
 import { getPublicAsset } from '../utils/assets';
 
 export const Navbar: React.FC = () => {
+  const {
+    activeView,
+    setActiveView,
+    setIsSearchOpen,
+    wishlist,
+    setIsWishlistOpen,
+    cart,
+    setIsCartOpen,
+  } = useShop();
+
   const [scrolled, setScrolled] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      
-      // Reveal navbar when scrolling past the intro section (~250px)
-      if (scrollY > 250) {
-        setVisible(true);
-      } else {
-        setVisible(false);
-        setMobileMenuOpen(false);
-      }
-
-      // Add stronger backdrop blur & shadow when scrolling further down
-      if (scrollY > 500) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 250);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check initial scroll position
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: 'Home', href: '#hero' },
-    { name: 'Collections', href: '#collections' },
-    { name: 'Products', href: '#products' },
-    { name: 'Featured', href: '#featured' },
-    { name: 'About', href: '#about' },
-    { name: 'Contact', href: '#contact' },
+  const navLinks: { label: string; view: PageView }[] = [
+    { label: 'Home', view: 'home' },
+    { label: 'Shop', view: 'shop' },
+    { label: 'Collections', view: 'collections' },
+    { label: 'About', view: 'about' },
+    { label: 'Showroom', view: 'showroom' },
+    { label: 'Contact', view: 'contact' },
   ];
 
+  const handleNavClick = (view: PageView) => {
+    setActiveView(view);
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const wishlistCount = wishlist.length;
+  const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
+
   return (
-    <header
-      className={`fixed top-4 left-0 right-0 z-50 px-4 md:px-8 max-w-7xl mx-auto transition-all duration-500 transform ${
-        visible
+    <nav
+      className={`fixed top-4 left-0 right-0 z-50 px-4 transition-all duration-500 ${
+        scrolled
           ? 'opacity-100 translate-y-0 pointer-events-auto'
           : 'opacity-0 -translate-y-8 pointer-events-none'
       }`}
     >
-      <div
-        className={`transition-all duration-500 rounded-full px-6 py-3 flex items-center justify-between backdrop-blur-2xl ${
-          scrolled
-            ? 'bg-[rgba(255,255,255,0.92)] border border-[rgba(255,255,255,0.95)] shadow-[0_15px_35px_-10px_rgba(6,91,182,0.14)]'
-            : 'bg-[rgba(255,255,255,0.78)] border border-[rgba(255,255,255,0.85)] shadow-[0_10px_30px_-10px_rgba(6,91,182,0.08)]'
-        }`}
-      >
+      <div className="max-w-7xl mx-auto rounded-full bg-[rgba(255,255,255,0.78)] backdrop-blur-2xl border border-[rgba(255,255,255,0.95)] shadow-xl px-6 py-3 flex items-center justify-between transition-all duration-300">
+        
         {/* Star Furniture Logo Image */}
-        <a href="#hero" className="flex items-center gap-3 group">
+        <button onClick={() => handleNavClick('home')} className="flex items-center gap-3 group">
           <img
             src={getPublicAsset('logo.png')}
             alt="Star Furniture Logo"
             className="h-8 sm:h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
           />
-        </a>
+        </button>
 
-        {/* Center Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8">
+        {/* Desktop Links */}
+        <div className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="text-sm font-medium text-[#334155] hover:text-[#065BB6] transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#065BB6] hover:after:w-full after:transition-all after:duration-300"
+            <button
+              key={link.label}
+              onClick={() => handleNavClick(link.view)}
+              className={`text-xs uppercase tracking-widest font-medium transition-colors duration-200 hover:text-[#065BB6] relative ${
+                activeView === link.view ? 'text-[#065BB6] font-semibold' : 'text-[#475569]'
+              }`}
             >
-              {link.name}
-            </a>
+              {link.label}
+              {activeView === link.view && (
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#065BB6] rounded-full" />
+              )}
+            </button>
           ))}
-        </nav>
+        </div>
 
-        {/* Right Action: Green Pill Button "Chat on WhatsApp" */}
-        <div className="flex items-center gap-3">
+        {/* Right Action Icons & WhatsApp Pill */}
+        <div className="hidden sm:flex items-center gap-3">
+          {/* Search Icon */}
+          <button
+            onClick={() => setIsSearchOpen(true)}
+            className="w-10 h-10 rounded-full bg-white/70 hover:bg-white text-slate-700 flex items-center justify-center transition-colors border border-slate-200/60 shadow-sm"
+            title="Search furniture"
+          >
+            <Search className="w-4.5 h-4.5" />
+          </button>
+
+          {/* Wishlist Icon with badge */}
+          <button
+            onClick={() => setIsWishlistOpen(true)}
+            className="relative w-10 h-10 rounded-full bg-white/70 hover:bg-white text-slate-700 flex items-center justify-center transition-colors border border-slate-200/60 shadow-sm"
+            title="View Wishlist"
+          >
+            <Heart className="w-4.5 h-4.5" />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#065BB6] text-white text-[10px] font-bold flex items-center justify-center">
+                {wishlistCount}
+              </span>
+            )}
+          </button>
+
+          {/* Cart Icon with badge */}
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative w-10 h-10 rounded-full bg-white/70 hover:bg-white text-slate-700 flex items-center justify-center transition-colors border border-slate-200/60 shadow-sm"
+            title="View Cart"
+          >
+            <ShoppingBag className="w-4.5 h-4.5" />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#25D366] text-white text-[10px] font-bold flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </button>
+
+          {/* WhatsApp Pill */}
           <a
             href={getWhatsAppLink()}
             target="_blank"
             rel="noopener noreferrer"
-            className="whatsapp-ripple-btn hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#25D366] hover:bg-[#1EBE57] text-white font-medium text-xs transition-all duration-300 shadow-md shadow-[rgba(37,211,102,0.3)] hover:scale-105 active:scale-95"
+            className="whatsapp-ripple-btn px-5 py-2.5 rounded-full bg-[#25D366] hover:bg-[#1EBE57] text-white text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-md shadow-[rgba(37,211,102,0.3)] hover:scale-105"
           >
             <MessageCircle className="w-4 h-4 fill-current" />
             <span>Chat on WhatsApp</span>
           </a>
+        </div>
 
-          {/* Mobile WhatsApp Icon Button */}
-          <a
-            href={getWhatsAppLink()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="sm:hidden w-9 h-9 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-md"
+        {/* Mobile Controls */}
+        <div className="flex sm:hidden items-center gap-2">
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative w-9 h-9 rounded-full bg-white/80 text-slate-700 flex items-center justify-center"
           >
-            <MessageCircle className="w-4 h-4 fill-current" />
-          </a>
+            <ShoppingBag className="w-4 h-4" />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#25D366] text-white text-[9px] font-bold flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </button>
 
-          {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden w-9 h-9 rounded-full bg-[rgba(6,91,182,0.06)] border border-[rgba(255,255,255,0.7)] flex items-center justify-center text-[#1E293B]"
+            className="p-2 text-[#1E293B] focus:outline-none"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="pointer-events-auto md:hidden mt-3 rounded-3xl p-6 bg-[rgba(255,255,255,0.95)] backdrop-blur-2xl border border-[rgba(255,255,255,0.95)] shadow-2xl flex flex-col gap-4 text-center">
+        <div className="sm:hidden mt-2 max-w-7xl mx-auto rounded-3xl bg-[rgba(255,255,255,0.95)] backdrop-blur-2xl border border-[rgba(255,255,255,0.95)] shadow-2xl p-6 flex flex-col gap-4">
           {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-base font-medium text-[#1E293B] py-2 border-b border-[rgba(6,91,182,0.06)] last:border-none hover:text-[#065BB6]"
+            <button
+              key={link.label}
+              onClick={() => handleNavClick(link.view)}
+              className="text-left text-sm uppercase tracking-wider font-semibold text-[#1E293B] hover:text-[#065BB6] py-1 border-b border-slate-100"
             >
-              {link.name}
-            </a>
+              {link.label}
+            </button>
           ))}
+
+          <div className="pt-2 flex items-center justify-between gap-3">
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setIsSearchOpen(true);
+              }}
+              className="flex-1 py-2.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold flex items-center justify-center gap-2"
+            >
+              <Search className="w-4 h-4" />
+              Search
+            </button>
+
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setIsWishlistOpen(true);
+              }}
+              className="flex-1 py-2.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold flex items-center justify-center gap-2"
+            >
+              <Heart className="w-4 h-4" />
+              Wishlist ({wishlistCount})
+            </button>
+          </div>
+
           <a
             href={getWhatsAppLink()}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => setMobileMenuOpen(false)}
-            className="mt-2 py-3 px-6 rounded-full bg-[#25D366] text-white font-medium text-sm flex items-center justify-center gap-2 shadow-lg shadow-[rgba(37,211,102,0.3)]"
+            className="w-full mt-2 py-3 rounded-full bg-[#25D366] text-white text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md"
           >
             <MessageCircle className="w-4 h-4 fill-current" />
-            Chat on WhatsApp
+            <span>Chat on WhatsApp</span>
           </a>
         </div>
       )}
-    </header>
+    </nav>
   );
 };

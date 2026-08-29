@@ -1,63 +1,99 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { ShopProvider, useShop } from './context/ShopContext';
 import { IntroLogo } from './components/IntroLogo';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { Collections } from './components/Collections';
+import { ShopByCategory } from './components/ShopByCategory';
 import { ProductShowcase } from './components/ProductShowcase';
+import { NewArrivalsCarousel } from './components/NewArrivalsCarousel';
 import { FeaturedProductSection } from './components/FeaturedProductSection';
-import { ProductModal } from './components/ProductModal';
+import { WhyStarFurniture } from './components/WhyStarFurniture';
+import { ShowroomBanner } from './components/ShowroomBanner';
 import { About } from './components/About';
 import { FinalReveal } from './components/FinalReveal';
 import { Footer } from './components/Footer';
 import { CustomCursor } from './components/CustomCursor';
-import type { Product } from './data/products';
-import './styles/liquid-morphism.css';
+import { SearchModal } from './components/SearchModal';
+import { WishlistDrawer } from './components/WishlistDrawer';
+import { CartDrawer } from './components/CartDrawer';
+import { ProductModal } from './components/ProductModal';
 
-export function App() {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+import { ShopView } from './views/ShopView';
+import { CategoryView } from './views/CategoryView';
+import { ProductDetailView } from './views/ProductDetailView';
+import { CollectionsView } from './views/CollectionsView';
+import { AboutView } from './views/AboutView';
+import { ShowroomView } from './views/ShowroomView';
+import { ContactView } from './views/ContactView';
+import { type Product } from './data/products';
+
+const AppContent: React.FC = () => {
+  const { activeView } = useShop();
+  const [modalProduct, setModalProduct] = useState<Product | null>(null);
+
+  const renderCurrentView = () => {
+    switch (activeView) {
+      case 'shop':
+        return <ShopView />;
+      case 'category':
+        return <CategoryView />;
+      case 'product-details':
+        return <ProductDetailView />;
+      case 'collections':
+        return <CollectionsView />;
+      case 'about':
+        return <AboutView />;
+      case 'showroom':
+        return <ShowroomView />;
+      case 'contact':
+        return <ContactView />;
+      case 'home':
+      default:
+        return (
+          <>
+            <Hero />
+            <ShopByCategory />
+            <ProductShowcase onSelectProduct={setModalProduct} />
+            <NewArrivalsCarousel />
+            <FeaturedProductSection />
+            <WhyStarFurniture />
+            <ShowroomBanner />
+            <About />
+            <FinalReveal />
+          </>
+        );
+    }
+  };
 
   return (
-    <div className="relative min-h-screen bg-[#FAFBFD] text-[#1E293B] font-sans antialiased selection:bg-[#065BB6]/20 selection:text-[#065BB6]">
-      {/* Custom Cursor */}
+    <div className="relative min-h-screen bg-[#FAFBFD] text-[#1E293B] overflow-x-hidden select-none">
       <CustomCursor />
+      
+      {/* Page 01: Huge Star Furniture Logo Intro (Visible on home initial view) */}
+      {activeView === 'home' && <IntroLogo />}
 
-      {/* PAGE 01 — STAR FURNITURE LOGO INTRO SECTION (Exact match to reference screenshot) */}
-      <IntroLogo />
-
-      {/* Floating Liquid Morphism Navbar */}
+      {/* Floating Glass Navbar */}
       <Navbar />
 
-      {/* Main Experience Flow */}
-      <main className="relative z-10">
-        {/* PAGE 02 — HOME / HERO */}
-        <Hero />
+      {/* Dynamic View Content */}
+      {renderCurrentView()}
 
-        {/* PAGE 03 — COLLECTIONS */}
-        <Collections />
-
-        {/* PAGE 04 — PRODUCT SHOWCASE */}
-        <ProductShowcase onSelectProduct={(prod) => setSelectedProduct(prod)} />
-
-        {/* PAGE 05 — FEATURED PRODUCT DETAILS */}
-        <FeaturedProductSection />
-
-        {/* PAGE 06 — ABOUT STAR FURNITURE */}
-        <About />
-
-        {/* PAGE 07 — FINAL CONTACT SECTION WITH PERSON ASSET & WHATSAPP */}
-        <FinalReveal />
-      </main>
-
-      {/* Product Quick-View Modal */}
-      <ProductModal
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-      />
-
-      {/* FOOTER */}
+      {/* Footer */}
       <Footer />
+
+      {/* Global Modals & Drawers */}
+      <SearchModal />
+      <WishlistDrawer />
+      <CartDrawer />
+      <ProductModal product={modalProduct} onClose={() => setModalProduct(null)} />
     </div>
   );
-}
+};
 
-export default App;
+export default function App() {
+  return (
+    <ShopProvider>
+      <AppContent />
+    </ShopProvider>
+  );
+}
