@@ -1,15 +1,15 @@
 import React from 'react';
 import { MessageCircle } from 'lucide-react';
-import { getWhatsAppLink } from '../data/products';
+import { getWhatsAppUrl } from '../config/contact';
 
 export const FloatingWhatsApp: React.FC = () => {
   return (
     <a
-      href={getWhatsAppLink()}
+      href={getWhatsAppUrl()}
       target="_blank"
       rel="noopener noreferrer"
       title="Chat with Star Furniture on WhatsApp"
-      className="whatsapp-ripple-btn fixed bottom-6 right-6 z-[90] w-14 h-14 rounded-full bg-[#25D366] hover:bg-[#1EBE57] text-white flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/80"
+      className="whatsapp-ripple-btn fixed bottom-6 right-6 z-[90] w-14 h-14 rounded-full bg-[#20B84B] hover:bg-[#19943C] text-white flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white/80"
     >
       <MessageCircle className="w-7 h-7 fill-current" />
       {/* Pulse Notification Dot */}

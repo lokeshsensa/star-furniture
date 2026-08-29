@@ -71,13 +71,13 @@ export const Navbar: React.FC = () => {
             <button
               key={link.label}
               onClick={() => handleNavClick(link.view)}
-              className={`text-xs uppercase tracking-widest font-medium transition-colors duration-200 hover:text-[#065BB6] relative ${
-                activeView === link.view ? 'text-[#065BB6] font-semibold' : 'text-[#475569]'
+              className={`text-xs uppercase tracking-widest font-medium transition-colors duration-200 hover:text-[#1261B8] relative ${
+                activeView === link.view ? 'text-[#1261B8] font-semibold' : 'text-[#687386]'
               }`}
             >
               {link.label}
               {activeView === link.view && (
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#065BB6] rounded-full" />
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#1261B8] rounded-full" />
               )}
             </button>
           ))}
@@ -102,7 +102,7 @@ export const Navbar: React.FC = () => {
           >
             <Heart className="w-4.5 h-4.5" />
             {wishlistCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#065BB6] text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#1261B8] text-white text-[10px] font-bold flex items-center justify-center">
                 {wishlistCount}
               </span>
             )}
@@ -116,7 +116,7 @@ export const Navbar: React.FC = () => {
           >
             <ShoppingBag className="w-4.5 h-4.5" />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#25D366] text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#20B84B] text-white text-[10px] font-bold flex items-center justify-center">
                 {cartCount}
               </span>
             )}
@@ -127,7 +127,7 @@ export const Navbar: React.FC = () => {
             href={getWhatsAppLink()}
             target="_blank"
             rel="noopener noreferrer"
-            className="whatsapp-ripple-btn px-5 py-2.5 rounded-full bg-[#25D366] hover:bg-[#1EBE57] text-white text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-md shadow-[rgba(37,211,102,0.3)] hover:scale-105"
+            className="whatsapp-ripple-btn px-5 py-2.5 rounded-full bg-[#20B84B] hover:bg-[#19943C] text-white text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-md shadow-[rgba(32,184,75,0.3)] hover:scale-105"
           >
             <MessageCircle className="w-4 h-4 fill-current" />
             <span>Chat on WhatsApp</span>

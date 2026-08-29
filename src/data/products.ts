@@ -1,4 +1,5 @@
 import { getPublicAsset } from '../utils/assets';
+import { getWhatsAppUrl } from '../config/contact';
 
 export interface Product {
   id: string;
@@ -391,12 +392,13 @@ export const productsData: Product[] = [
   },
 ];
 
+
 export const getWhatsAppLink = (productName?: string): string => {
   const message = productName
     ? `Hi Star Furniture, I'm interested in the ${productName}. Please share the price and availability.`
     : `Hi Star Furniture, I visited your website and would like to know more about your furniture collection.`;
   
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return getWhatsAppUrl(message);
 };
 
 export const getCartWhatsAppLink = (cartItems: { name: string; quantity: number; finish?: string; price: string }[]): string => {
@@ -408,5 +410,5 @@ export const getCartWhatsAppLink = (cartItems: { name: string; quantity: number;
     
   const message = `Hi Star Furniture, I would like to enquire about the following items from my cart:\n\n${itemsText}\n\nPlease share availability, best price, and delivery schedule.`;
   
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return getWhatsAppUrl(message);
 };

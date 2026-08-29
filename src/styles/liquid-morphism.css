@@ -1,32 +1,31 @@
-/* Liquid Morphism Design System inspired by Star Furniture Logo */
 :root {
-  --bg-ivory: #F8FAF9;
+  --bg-ivory: #F7FAFC;
   --bg-white: #FFFFFF;
-  --text-dark: #1E293B;
-  --text-muted: #64748B;
+  --text-dark: #172033;
+  --text-muted: #687386;
   
-  /* Logo Inspired Color Palette */
-  --logo-blue: #065BB6;
-  --logo-blue-deep: #0F4B9C;
-  --logo-blue-soft: rgba(6, 91, 182, 0.12);
-  --logo-blue-glow: rgba(6, 91, 182, 0.25);
+  /* Brand Color Palette */
+  --logo-blue: #1261B8;
+  --logo-blue-deep: #0E4E94;
+  --logo-blue-soft: rgba(18, 97, 184, 0.10);
+  --logo-blue-glow: rgba(18, 97, 184, 0.25);
 
-  --logo-green: #0D9488;
-  --logo-green-deep: #059669;
-  --logo-green-soft: rgba(13, 148, 136, 0.12);
-  --logo-green-glow: rgba(13, 148, 136, 0.25);
+  --logo-green: #20B84B;
+  --logo-green-deep: #19943C;
+  --logo-green-soft: rgba(32, 184, 75, 0.10);
+  --logo-green-glow: rgba(32, 184, 75, 0.25);
 
-  --whatsapp-green: #25D366;
-  --whatsapp-hover: #1EBE57;
-  --whatsapp-glow: rgba(37, 211, 102, 0.35);
+  --whatsapp-green: #20B84B;
+  --whatsapp-hover: #19943C;
+  --whatsapp-glow: rgba(32, 184, 75, 0.35);
 
-  /* Soft Translucent Glass */
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --glass-bg-hover: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.8);
-  --glass-border-subtle: rgba(6, 91, 182, 0.08);
-  --glass-shadow: 0 20px 45px -15px rgba(15, 75, 156, 0.08);
-  --glass-shadow-hover: 0 30px 60px -15px rgba(6, 91, 182, 0.15);
+  /* Translucent Glass System */
+  --glass-bg: rgba(255, 255, 255, 0.70);
+  --glass-bg-hover: rgba(255, 255, 255, 0.90);
+  --glass-border: rgba(255, 255, 255, 0.85);
+  --glass-border-subtle: rgba(18, 97, 184, 0.10);
+  --glass-shadow: 0 20px 45px -15px rgba(18, 97, 184, 0.08);
+  --glass-shadow-hover: 0 30px 60px -15px rgba(18, 97, 184, 0.15);
 
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;

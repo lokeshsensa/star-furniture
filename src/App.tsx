@@ -28,6 +28,8 @@ import { ShowroomView } from './views/ShowroomView';
 import { ContactView } from './views/ContactView';
 import { type Product } from './data/products';
 
+import { PromoBanner } from './components/PromoBanner';
+
 const AppContent: React.FC = () => {
   const { activeView } = useShop();
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
@@ -57,6 +59,7 @@ const AppContent: React.FC = () => {
             <ShopByCategory />
             <ProductShowcase onSelectProduct={setModalProduct} />
             <NewArrivalsCarousel />
+            <PromoBanner />
             <FeaturedProductSection />
             <WhyStarFurniture />
             <ShowroomBanner />

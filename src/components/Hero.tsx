@@ -130,8 +130,8 @@ export const Hero: React.FC = () => {
         <div className="lg:col-span-6 flex flex-col items-start">
           {/* Label */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(255,255,255,0.75)] backdrop-blur-md border border-[rgba(255,255,255,0.9)] shadow-sm mb-6">
-            <Sparkles className="w-4 h-4 text-[#065BB6]" />
-            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-[#065BB6]">
+            <Sparkles className="w-4 h-4 text-[#1261B8]" />
+            <span className="text-xs uppercase tracking-[0.25em] font-semibold text-[#1261B8]">
               PREMIUM FURNITURE
             </span>
           </div>
@@ -139,27 +139,27 @@ export const Hero: React.FC = () => {
           {/* Heading */}
           <h1
             ref={headingRef}
-            className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-[#1E293B] leading-[1.1] tracking-tight"
+            className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-[#172033] leading-[1.1] tracking-tight"
           >
             Designed for <br />
-            <span className="text-[#065BB6]">Comfort.</span> Built for <span className="text-[#0D9488]">Life.</span>
+            <span className="text-[#1261B8]">Comfort.</span> Built for <span className="text-[#20B84B]">Life.</span>
           </h1>
 
           {/* Subtitle */}
           <p
             ref={descriptionRef}
-            className="mt-6 text-base sm:text-lg text-[#475569] font-light leading-relaxed max-w-xl"
+            className="mt-6 text-base sm:text-lg text-[#687386] font-light leading-relaxed max-w-xl"
           >
-            Discover furniture that combines elegance, durability and unmatched comfort to elevate your space.
+            Discover thoughtfully crafted furniture designed to bring comfort, quality and timeless style into your home.
           </p>
 
           {/* Buttons */}
           <div ref={buttonsRef} className="mt-8 flex flex-wrap items-center gap-4">
             <a
-              href="#collections"
-              className="group px-8 py-4 rounded-full bg-[#065BB6] hover:bg-[#0F4B9C] text-white font-medium text-sm transition-all duration-300 shadow-xl shadow-[rgba(6,91,182,0.25)] hover:shadow-2xl hover:scale-[1.02] flex items-center gap-3"
+              href="#categories"
+              className="group px-8 py-4 rounded-full bg-[#1261B8] hover:bg-[#0E4E94] text-white font-medium text-sm transition-all duration-300 shadow-xl shadow-[rgba(18,97,184,0.25)] hover:shadow-2xl hover:scale-[1.02] flex items-center gap-3"
             >
-              EXPLORE COLLECTION
+              Explore Furniture
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </a>
 
@@ -167,10 +167,10 @@ export const Hero: React.FC = () => {
               href={getWhatsAppLink()}
               target="_blank"
               rel="noopener noreferrer"
-              className="whatsapp-ripple-btn px-7 py-4 rounded-full bg-[rgba(37,211,102,0.12)] border border-[rgba(37,211,102,0.35)] hover:bg-[#25D366] text-[#128C7E] hover:text-white font-medium text-sm transition-all duration-300 flex items-center gap-2.5 shadow-sm hover:shadow-[0_10px_25px_rgba(37,211,102,0.3)] hover:scale-[1.02]"
+              className="whatsapp-ripple-btn px-7 py-4 rounded-full bg-[#20B84B] hover:bg-[#19943C] text-white font-medium text-sm transition-all duration-300 flex items-center gap-2.5 shadow-md hover:shadow-[0_10px_25px_rgba(32,184,75,0.3)] hover:scale-[1.02]"
             >
               <MessageCircle className="w-4.5 h-4.5 fill-current" />
-              WHATSAPP US
+              Contact on WhatsApp
             </a>
           </div>
 
