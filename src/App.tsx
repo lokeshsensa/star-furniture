@@ -17,6 +17,7 @@ import { SearchModal } from './components/SearchModal';
 import { WishlistDrawer } from './components/WishlistDrawer';
 import { CartDrawer } from './components/CartDrawer';
 import { ProductModal } from './components/ProductModal';
+import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 
 import { ShopView } from './views/ShopView';
 import { CategoryView } from './views/CategoryView';
@@ -69,7 +70,7 @@ const AppContent: React.FC = () => {
     <div className="relative min-h-screen bg-[#FAFBFD] text-[#1E293B] overflow-x-hidden select-none">
       <CustomCursor />
       
-      {/* Page 01: Huge Star Furniture Logo Intro (Visible on home initial view) */}
+      {/* Page 01: Full Screen Star Furniture Logo Intro */}
       {activeView === 'home' && <IntroLogo />}
 
       {/* Floating Glass Navbar */}
@@ -77,6 +78,9 @@ const AppContent: React.FC = () => {
 
       {/* Dynamic View Content */}
       {renderCurrentView()}
+
+      {/* Persistent Floating WhatsApp Button */}
+      <FloatingWhatsApp />
 
       {/* Footer */}
       <Footer />
