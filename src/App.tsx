@@ -31,6 +31,7 @@ import { type Product } from './data/products';
 const AppContent: React.FC = () => {
   const { activeView } = useShop();
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
+  const [showIntro, setShowIntro] = useState<boolean>(true);
 
   const renderCurrentView = () => {
     switch (activeView) {
@@ -70,8 +71,10 @@ const AppContent: React.FC = () => {
     <div className="relative min-h-screen bg-[#FAFBFD] text-[#1E293B] overflow-x-hidden select-none">
       <CustomCursor />
       
-      {/* Page 01: Full Screen Star Furniture Logo Intro */}
-      {activeView === 'home' && <IntroLogo />}
+      {/* Page 01: Full Screen Star Furniture Cinematic Splash Screen (Automatic ~4s sequence) */}
+      {activeView === 'home' && showIntro && (
+        <IntroLogo onComplete={() => setShowIntro(false)} />
+      )}
 
       {/* Floating Glass Navbar */}
       <Navbar />
