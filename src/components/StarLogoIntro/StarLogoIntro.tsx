@@ -1,17 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { getPublicAsset } from "../../utils/assets";
+import starLogo from "../../assets/star-furniture-logo.png";
 
 type StarLogoIntroProps = {
   onComplete?: () => void;
 };
 
 const RINGS = [
-  { r: 210, duration: 1.6, at: 0.5, opacity: 0.45, width: 1.2 },
-  { r: 245, duration: 1.8, at: 0.8, opacity: 0.35, width: 1.0 },
-  { r: 280, duration: 2.0, at: 1.1, opacity: 0.28, width: 0.9 },
-  { r: 318, duration: 2.2, at: 1.4, opacity: 0.20, width: 0.8 },
-  { r: 358, duration: 2.4, at: 1.7, opacity: 0.14, width: 0.7 },
+  { r: 210, duration: 1.6, at: 0.4, opacity: 0.45, width: 1.2 },
+  { r: 245, duration: 1.8, at: 0.7, opacity: 0.35, width: 1.0 },
+  { r: 280, duration: 2.0, at: 1.0, opacity: 0.28, width: 0.9 },
+  { r: 318, duration: 2.2, at: 1.3, opacity: 0.20, width: 0.8 },
+  { r: 358, duration: 2.4, at: 1.6, opacity: 0.14, width: 0.7 },
 ];
 
 const PARTICLES = [
@@ -47,9 +47,9 @@ export const StarLogoIntro: React.FC<StarLogoIntroProps> = ({ onComplete }) => {
       gsap.set(q(".sli-particle"), { opacity: 0, scale: 0.4 });
       gsap.set(q(".sli-logo"), {
         opacity: 0,
-        scale: 0.82,
-        y: 20,
-        filter: "blur(18px)",
+        scale: 0.85,
+        y: 15,
+        filter: "blur(14px)",
       });
       gsap.set(q(".sli-sweep"), { opacity: 0, xPercent: -180, rotate: 12 });
       gsap.set(q(".sli-rings-wrap"), { scale: 0.95, opacity: 1 });
@@ -71,8 +71,8 @@ export const StarLogoIntro: React.FC<StarLogoIntroProps> = ({ onComplete }) => {
       });
 
       // 1. Atmosphere & Core Glow Fade-in
-      tl.to(q(".sli-atmosphere"), { opacity: 1, scale: 1, duration: 1.4 }, 0.2)
-        .to(q(".sli-core"), { opacity: 1, scale: 1, duration: 1.2 }, 0.3);
+      tl.to(q(".sli-atmosphere"), { opacity: 1, scale: 1, duration: 1.3 }, 0.2)
+        .to(q(".sli-core"), { opacity: 1, scale: 1, duration: 1.1 }, 0.3);
 
       // 2. Ambient Particles Reveal
       PARTICLES.forEach((p, i) => {
@@ -81,14 +81,14 @@ export const StarLogoIntro: React.FC<StarLogoIntroProps> = ({ onComplete }) => {
         tl.to(
           el,
           {
-            opacity: gsap.utils.random(0.35, 0.75, 0.01),
+            opacity: gsap.utils.random(0.4, 0.8, 0.01),
             scale: 1,
             y: gsap.utils.random(-16, -4),
             duration: 1.3,
             ease: "sine.out",
           },
-          0.4 + p.d * 0.4
-        ).to(el, { opacity: 0, duration: 1.1, ease: "sine.inOut" }, 2.4 + p.d * 0.3);
+          0.3 + p.d * 0.4
+        ).to(el, { opacity: 0, duration: 1.1, ease: "sine.inOut" }, 2.5 + p.d * 0.3);
       });
 
       // 3. Orbital SVG Rings Stroke Drawing
@@ -103,7 +103,7 @@ export const StarLogoIntro: React.FC<StarLogoIntroProps> = ({ onComplete }) => {
           );
       });
 
-      // 4. Logo Cinematic Emergence (Crystal Clear & Crisp)
+      // 4. Logo Cinematic Emergence
       tl.to(
         q(".sli-logo"),
         {
@@ -111,24 +111,24 @@ export const StarLogoIntro: React.FC<StarLogoIntroProps> = ({ onComplete }) => {
           scale: 1,
           y: 0,
           filter: "blur(0px)",
-          duration: 1.4,
+          duration: 1.3,
           ease: "power3.out",
         },
-        0.8
+        0.7
       );
 
       // 5. Shimmer Light Sweep across the Logo
-      tl.to(q(".sli-sweep"), { opacity: 1, duration: 0.25, ease: "sine.out" }, 2.0)
-        .to(q(".sli-sweep"), { xPercent: 180, duration: 1.1, ease: "power1.inOut" }, 2.0)
-        .to(q(".sli-sweep"), { opacity: 0, duration: 0.35, ease: "sine.in" }, 2.8);
+      tl.to(q(".sli-sweep"), { opacity: 1, duration: 0.25, ease: "sine.out" }, 1.9)
+        .to(q(".sli-sweep"), { xPercent: 180, duration: 1.1, ease: "power1.inOut" }, 1.9)
+        .to(q(".sli-sweep"), { opacity: 0, duration: 0.35, ease: "sine.in" }, 2.7);
 
       // 6. Rings breathing settle
-      tl.to(q(".sli-rings-wrap"), { scale: 1.02, duration: 1.0, ease: "power2.out" }, 2.6)
-        .to(q(".sli-atmosphere"), { opacity: 0.6, duration: 0.8 }, 2.8)
-        .to(q(".sli-core"), { opacity: 0.4, duration: 0.8 }, 2.8);
+      tl.to(q(".sli-rings-wrap"), { scale: 1.02, duration: 1.0, ease: "power2.out" }, 2.5)
+        .to(q(".sli-atmosphere"), { opacity: 0.6, duration: 0.8 }, 2.7)
+        .to(q(".sli-core"), { opacity: 0.4, duration: 0.8 }, 2.7);
 
       // 7. Fade-out transition into homepage
-      tl.to(rootRef.current, { opacity: 0, duration: 0.6, ease: "power2.inOut" }, 3.5);
+      tl.to(rootRef.current, { opacity: 0, duration: 0.6, ease: "power2.inOut" }, 3.6);
     }, rootRef);
 
     return () => ctx.revert();
@@ -183,11 +183,11 @@ export const StarLogoIntro: React.FC<StarLogoIntroProps> = ({ onComplete }) => {
           ))}
         </svg>
 
-        {/* Crisp, Completely Uncropped Logo Container */}
+        {/* Logo Container */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="relative w-[65%] sm:w-[58%] max-w-[500px] aspect-square flex items-center justify-center overflow-hidden">
             <img
-              src={getPublicAsset("assets/branding/star_logo_transparent.png")}
+              src={starLogo}
               alt="Star Furniture — Comfort, Quality, Trust"
               className="sli-logo block w-full h-full object-contain select-none will-change-transform drop-shadow-[0_10px_25px_rgba(23,105,170,0.12)]"
               draggable={false}
