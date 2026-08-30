@@ -6,26 +6,24 @@ export default {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        serif: ['Playfair Display', 'Georgia', 'serif'],
-        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-      },
       colors: {
-        ivory: {
-          DEFAULT: '#FAF6F0',
-          soft: '#F5EFE6',
-        },
-        walnut: {
-          DEFAULT: '#2C221E',
-          deep: '#1C1512',
-          light: '#5A4A41',
-          muted: '#8C7A6B',
-        },
-        champagne: {
-          DEFAULT: '#C5A880',
-          glow: '#F5E8C7',
-        },
-        gold: '#D4AF37',
+        star: {
+          blue: '#1769AA',
+          deepBlue: '#0B2E4F',
+          darkNavy: '#071E34',
+          green: '#2E9B4B',
+          deepGreen: '#1E7E34',
+          white: '#FFFFFF',
+          offWhite: '#F7F8F6',
+          lightGrey: '#EEF1EF',
+          darkText: '#111111',
+          mutedText: '#4A5568',
+        }
+      },
+      fontFamily: {
+        display: ['Playfair Display', 'Cormorant Garamond', 'Georgia', 'serif'],
+        serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+        sans: ['Manrope', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
     },
   },
