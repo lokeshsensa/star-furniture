@@ -1,22 +1,31 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { IntroPage } from './pages/IntroPage';
+import React, { useState } from 'react';
+import { HashRouter, Routes, Route } from 'react-router-dom';
+import { StarLogoIntro } from './components/StarLogoIntro/StarLogoIntro';
 import { HomePage } from './pages/HomePage';
+import { IntroPage } from './pages/IntroPage';
+
+const MainLayout: React.FC = () => {
+  const [showIntro, setShowIntro] = useState<boolean>(true);
+
+  return (
+    <div className="relative min-h-screen bg-white">
+      {showIntro && (
+        <StarLogoIntro onComplete={() => setShowIntro(false)} />
+      )}
+      <HomePage />
+    </div>
+  );
+};
 
 export const App: React.FC = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
-        {/* Page 1: Logo Intro — /intro */}
         <Route path="/intro" element={<IntroPage />} />
-
-        {/* Page 2: Main Website — / */}
-        <Route path="/" element={<HomePage />} />
-
-        {/* Fallback redirect */}
-        <Route path="*" element={<Navigate to="/intro" replace />} />
+        <Route path="/" element={<MainLayout />} />
+        <Route path="*" element={<MainLayout />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 
